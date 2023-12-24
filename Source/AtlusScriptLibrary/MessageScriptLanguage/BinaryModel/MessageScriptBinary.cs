@@ -9,51 +9,51 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
 {
     public class MessageScriptBinary
     {
-        public static MessageScriptBinary FromFile( string path )
+        public static MessageScriptBinary FromFile(string path)
         {
-            if ( path == null )
-                throw new ArgumentNullException( nameof( path ) );
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
 
-            if ( string.IsNullOrEmpty( path ) )
-                throw new ArgumentException( "Value cannot be null or empty.", nameof( path ) );
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Value cannot be null or empty.", nameof(path));
 
-            return FromFile( path, BinaryFormatVersion.Unknown );
+            return FromFile(path, BinaryFormatVersion.Unknown);
         }
 
-        public static MessageScriptBinary FromFile( string path, BinaryFormatVersion version )
+        public static MessageScriptBinary FromFile(string path, BinaryFormatVersion version)
         {
-            if ( path == null )
-                throw new ArgumentNullException( nameof( path ) );
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
 
-            if ( string.IsNullOrEmpty( path ) )
-                throw new ArgumentException( "Value cannot be null or empty.", nameof( path ) );
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Value cannot be null or empty.", nameof(path));
 
-            if ( !Enum.IsDefined( typeof( BinaryFormatVersion ), version ) )
-                throw new InvalidEnumArgumentException( nameof( version ), ( int )version,
-                    typeof( BinaryFormatVersion ) );
+            if (!Enum.IsDefined(typeof(BinaryFormatVersion), version))
+                throw new InvalidEnumArgumentException(nameof(version), (int)version,
+                    typeof(BinaryFormatVersion));
 
-            using ( var fileStream = File.OpenRead( path ) )
-                return FromStream( fileStream, version );
+            using (var fileStream = File.OpenRead(path))
+                return FromStream(fileStream, version);
         }
 
-        public static MessageScriptBinary FromStream( Stream stream, bool leaveOpen = false )
+        public static MessageScriptBinary FromStream(Stream stream, bool leaveOpen = false)
         {
-            if ( stream == null )
-                throw new ArgumentNullException( nameof( stream ) );
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
 
-            return FromStream( stream, BinaryFormatVersion.Unknown, leaveOpen );
+            return FromStream(stream, BinaryFormatVersion.Unknown, leaveOpen);
         }
 
-        public static MessageScriptBinary FromStream( Stream stream, BinaryFormatVersion version, bool leaveOpen = false )
+        public static MessageScriptBinary FromStream(Stream stream, BinaryFormatVersion version, bool leaveOpen = false)
         {
-            if ( stream == null )
-                throw new ArgumentNullException( nameof( stream ) );
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
 
-            if ( !Enum.IsDefined( typeof( BinaryFormatVersion ), version ) )
-                throw new InvalidEnumArgumentException( nameof( version ), ( int )version,
-                    typeof( BinaryFormatVersion ) );
+            if (!Enum.IsDefined(typeof(BinaryFormatVersion), version))
+                throw new InvalidEnumArgumentException(nameof(version), (int)version,
+                    typeof(BinaryFormatVersion));
 
-            using ( var reader = new MessageScriptBinaryReader( stream, version, leaveOpen ) )
+            using (var reader = new MessageScriptBinaryReader(stream, version, leaveOpen))
             {
                 return reader.ReadBinary();
             }
@@ -68,7 +68,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
         public BinaryHeader Header => mHeader;
 
         public ReadOnlyCollection<BinaryDialogHeader> DialogHeaders
-            => new ReadOnlyCollection<BinaryDialogHeader>( mDialogHeaders );
+            => new ReadOnlyCollection<BinaryDialogHeader>(mDialogHeaders);
 
         public BinarySpeakerTableHeader SpeakerTableHeader => mSpeakerTableHeader;
 
@@ -79,30 +79,30 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
         {
         }
 
-        public void ToFile( string path )
+        public void ToFile(string path)
         {
-            if ( path == null )
-                throw new ArgumentNullException( nameof( path ) );
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
 
-            if ( string.IsNullOrEmpty( path ) )
-                throw new ArgumentException( "Value cannot be null or empty.", nameof( path ) );
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Value cannot be null or empty.", nameof(path));
 
-            using ( var stream = FileUtils.Create( path ) )
-                ToStream( stream );
+            using (var stream = FileUtils.Create(path))
+                ToStream(stream);
         }
 
         public Stream ToStream()
         {
             var stream = new MemoryStream();
-            ToStream( stream, true );
+            ToStream(stream, true);
             return stream;
         }
 
-        public void ToStream( Stream stream, bool leaveOpen = false )
+        public void ToStream(Stream stream, bool leaveOpen = false)
         {
-            using ( var writer = new MessageScriptBinaryWriter( stream, mFormatVersion, leaveOpen ) )
+            using (var writer = new MessageScriptBinaryWriter(stream, mFormatVersion, leaveOpen))
             {
-                writer.WriteBinary( this );
+                writer.WriteBinary(this);
             }
         }
     }

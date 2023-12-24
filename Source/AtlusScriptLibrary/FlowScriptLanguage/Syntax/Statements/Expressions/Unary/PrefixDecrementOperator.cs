@@ -8,7 +8,7 @@
 
         }
 
-        public PrefixDecrementOperator( Expression operand ) : base( operand )
+        public PrefixDecrementOperator(Expression operand) : base(operand)
         {
 
         }

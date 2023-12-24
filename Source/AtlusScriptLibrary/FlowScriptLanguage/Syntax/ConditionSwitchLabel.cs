@@ -8,8 +8,8 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         {
         }
 
-        public ConditionSwitchLabel( Expression condition, params Statement[] statements )
-            : base( statements )
+        public ConditionSwitchLabel(Expression condition, params Statement[] statements)
+            : base(statements)
         {
             Condition = condition;
         }

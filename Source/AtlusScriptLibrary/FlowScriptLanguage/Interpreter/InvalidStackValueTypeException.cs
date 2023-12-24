@@ -6,19 +6,19 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Interpreter
     [Serializable]
     public class InvalidStackValueTypeException : InvalidOperationException
     {
-        public InvalidStackValueTypeException( StackValueKind expected, StackValueKind got ) : base( $"The parameter type is invalid. Expected: {expected}. Got: {got}." )
+        public InvalidStackValueTypeException(StackValueKind expected, StackValueKind got) : base($"The parameter type is invalid. Expected: {expected}. Got: {got}.")
         {
         }
 
-        public InvalidStackValueTypeException( string message ) : base( message )
+        public InvalidStackValueTypeException(string message) : base(message)
         {
         }
 
-        public InvalidStackValueTypeException( string message, Exception innerException ) : base( message, innerException )
+        public InvalidStackValueTypeException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
-        protected InvalidStackValueTypeException( SerializationInfo info, StreamingContext context ) : base( info, context )
+        protected InvalidStackValueTypeException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

@@ -8,7 +8,7 @@
 
         public int Precedence => 2;
 
-        public MemberAccessExpression() : base( ValueKind.Unresolved )
+        public MemberAccessExpression() : base(ValueKind.Unresolved)
         {
         }
 

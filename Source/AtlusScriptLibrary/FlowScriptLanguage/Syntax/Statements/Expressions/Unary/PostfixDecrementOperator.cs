@@ -8,7 +8,7 @@
 
         }
 
-        public PostfixDecrementOperator( Expression operand ) : base( operand )
+        public PostfixDecrementOperator(Expression operand) : base(operand)
         {
 
         }

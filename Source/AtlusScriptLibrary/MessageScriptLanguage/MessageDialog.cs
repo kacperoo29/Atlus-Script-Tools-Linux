@@ -25,15 +25,15 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// </summary>
         public List<TokenText> Pages { get; }
 
-        List< TokenText > IDialog.Lines => Pages;
+        List<TokenText> IDialog.Lines => Pages;
 
         /// <summary>
         /// Constructs a new dialog window with just an identifier.
         /// </summary>
         /// <param name="identifier">The identifier of the window.</param>
-        public MessageDialog( string identifier )
+        public MessageDialog(string identifier)
         {
-            Name = identifier ?? throw new ArgumentNullException( nameof( identifier ) );
+            Name = identifier ?? throw new ArgumentNullException(nameof(identifier));
             Speaker = null;
             Pages = new List<TokenText>();
         }
@@ -43,9 +43,9 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// </summary>
         /// <param name="identifier">The identifier of the window.</param>
         /// <param name="speaker">The speaker of the window.</param>
-        public MessageDialog( string identifier, ISpeaker speaker )
+        public MessageDialog(string identifier, ISpeaker speaker)
         {
-            Name = identifier ?? throw new ArgumentNullException( nameof( identifier ) );
+            Name = identifier ?? throw new ArgumentNullException(nameof(identifier));
             Speaker = speaker;
             Pages = new List<TokenText>();
         }
@@ -56,11 +56,11 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// <param name="identifier">The identifier of the window.</param>
         /// <param name="speaker">The speaker of the window.</param>
         /// <param name="lines">The list of lines of the window.</param>
-        public MessageDialog( string identifier, ISpeaker speaker, List<TokenText> lines )
+        public MessageDialog(string identifier, ISpeaker speaker, List<TokenText> lines)
         {
-            Name = identifier ?? throw new ArgumentNullException( nameof( identifier ) );
+            Name = identifier ?? throw new ArgumentNullException(nameof(identifier));
             Speaker = speaker;
-            Pages = lines ?? throw new ArgumentNullException( nameof( lines ) );
+            Pages = lines ?? throw new ArgumentNullException(nameof(lines));
         }
 
         /// <summary>
@@ -68,9 +68,9 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// </summary>
         /// <param name="identifier">The identifier of the window.</param>
         /// <param name="pages">The list of lines of the window.</param>
-        public MessageDialog( string identifier, List<TokenText> pages )
+        public MessageDialog(string identifier, List<TokenText> pages)
         {
-            Name = identifier ?? throw new ArgumentNullException( nameof( identifier ) );
+            Name = identifier ?? throw new ArgumentNullException(nameof(identifier));
             Speaker = null;
             Pages = pages;
         }
@@ -81,9 +81,9 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// <param name="identifier">The identifier of the window.</param>
         /// <param name="speaker">The speaker of the window.</param>
         /// <param name="lines">The list of lines of the window.</param>
-        public MessageDialog( string identifier, ISpeaker speaker, params TokenText[] lines )
+        public MessageDialog(string identifier, ISpeaker speaker, params TokenText[] lines)
         {
-            Name = identifier ?? throw new ArgumentNullException( nameof( identifier ) );
+            Name = identifier ?? throw new ArgumentNullException(nameof(identifier));
             Speaker = speaker;
             Pages = lines.ToList();
         }
@@ -93,9 +93,9 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// </summary>
         /// <param name="identifier">The identifier of the window.</param>
         /// <param name="lines">The list of lines of the window.</param>
-        public MessageDialog( string identifier, params TokenText[] lines )
+        public MessageDialog(string identifier, params TokenText[] lines)
         {
-            Name = identifier ?? throw new ArgumentNullException( nameof( identifier ) );
+            Name = identifier ?? throw new ArgumentNullException(nameof(identifier));
             Speaker = null;
             Pages = lines.ToList();
         }

@@ -4,12 +4,12 @@
     {
         public int Precedence => 5;
 
-        public MultiplicationOperator() : base( ValueKind.Unresolved )
+        public MultiplicationOperator() : base(ValueKind.Unresolved)
         {
         }
 
-        public MultiplicationOperator( Expression left, Expression right )
-            : base( ValueKind.Unresolved, left, right )
+        public MultiplicationOperator(Expression left, Expression right)
+            : base(ValueKind.Unresolved, left, right)
         {
 
         }

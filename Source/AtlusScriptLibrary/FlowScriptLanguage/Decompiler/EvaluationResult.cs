@@ -15,7 +15,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
 
         public Dictionary<Statement, EvaluatedStatement> EvaluatedStatementInfoLookup { get; }
 
-        internal EvaluationResult( FlowScript flowScript, EvaluatedScope scope )
+        internal EvaluationResult(FlowScript flowScript, EvaluatedScope scope)
         {
             FlowScript = flowScript;
             Scope = scope;

@@ -14,13 +14,13 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
 
         public virtual bool IsArray => false;
 
-        public VariableDeclaration() : base( DeclarationType.Variable )
+        public VariableDeclaration() : base(DeclarationType.Variable)
         {
             Modifier = new VariableModifier();
         }
 
-        public VariableDeclaration( VariableModifier modifier, TypeIdentifier type, Identifier identifier, Expression initializer )
-            : base( DeclarationType.Variable, identifier )
+        public VariableDeclaration(VariableModifier modifier, TypeIdentifier type, Identifier identifier, Expression initializer)
+            : base(DeclarationType.Variable, identifier)
         {
             Modifier = modifier;
             Type = type;
@@ -31,25 +31,25 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         {
             var builder = new StringBuilder();
 
-            builder.Append( $"{Modifier} " );
+            builder.Append($"{Modifier} ");
 
-            builder.Append( $"{Type} {Identifier}" );
-            if ( Initializer != null )
+            builder.Append($"{Type} {Identifier}");
+            if (Initializer != null)
             {
-                builder.Append( $" = {Initializer}" );
+                builder.Append($" = {Initializer}");
             }
 
             return builder.ToString();
         }
 
-        public static VariableDeclaration FromLibraryConstant( FlowScriptModuleConstant libraryConstant )
+        public static VariableDeclaration FromLibraryConstant(FlowScriptModuleConstant libraryConstant)
         {
-            var modifier = new VariableModifier( VariableModifierKind.Constant );
-            var type = new TypeIdentifier( KeywordDictionary.KeywordToValueType[ libraryConstant.Type ] );
-            var identifier = new Identifier( type.ValueKind, libraryConstant.Name );
-            var initializer = Expression.FromText( libraryConstant.Value );
+            var modifier = new VariableModifier(VariableModifierKind.Constant);
+            var type = new TypeIdentifier(KeywordDictionary.KeywordToValueType[libraryConstant.Type]);
+            var identifier = new Identifier(type.ValueKind, libraryConstant.Name);
+            var initializer = Expression.FromText(libraryConstant.Value);
 
-            return new VariableDeclaration( modifier, type, identifier, initializer );
+            return new VariableDeclaration(modifier, type, identifier, initializer);
         }
     }
 
@@ -63,8 +63,8 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         {
         }
 
-        public ArrayVariableDeclaration( VariableModifier modifier, TypeIdentifier type, Identifier identifier, IntLiteral size, Expression initializer )
-            : base( modifier, type, identifier, initializer )
+        public ArrayVariableDeclaration(VariableModifier modifier, TypeIdentifier type, Identifier identifier, IntLiteral size, Expression initializer)
+            : base(modifier, type, identifier, initializer)
         {
             Size = size;
         }
@@ -73,12 +73,12 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         {
             var builder = new StringBuilder();
 
-            builder.Append( $"{Modifier} " );
+            builder.Append($"{Modifier} ");
 
-            builder.Append( $"{Type} {Identifier}[{Size}]" );
-            if ( Initializer != null )
+            builder.Append($"{Type} {Identifier}[{Size}]");
+            if (Initializer != null)
             {
-                builder.Append( $" = {Initializer}" );
+                builder.Append($" = {Initializer}");
             }
 
             return builder.ToString();

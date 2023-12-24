@@ -4,12 +4,12 @@
     {
         public int Precedence => 6;
 
-        public SubtractionOperator() : base( ValueKind.Unresolved )
+        public SubtractionOperator() : base(ValueKind.Unresolved)
         {
         }
 
-        public SubtractionOperator( Expression left, Expression right )
-            : base( ValueKind.Unresolved, left, right )
+        public SubtractionOperator(Expression left, Expression right)
+            : base(ValueKind.Unresolved, left, right)
         {
 
         }

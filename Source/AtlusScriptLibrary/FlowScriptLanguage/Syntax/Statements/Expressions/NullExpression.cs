@@ -2,7 +2,7 @@
 {
     public class NullExpression : Expression
     {
-        public NullExpression() : base( ValueKind.Null )
+        public NullExpression() : base(ValueKind.Null)
         {
         }
 

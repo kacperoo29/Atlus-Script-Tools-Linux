@@ -4,11 +4,11 @@
     {
         public int Precedence => 2;
 
-        protected PostfixOperator() : base( ValueKind.Unresolved )
+        protected PostfixOperator() : base(ValueKind.Unresolved)
         {
         }
 
-        protected PostfixOperator( Expression operand ) : base( ValueKind.Unresolved, operand )
+        protected PostfixOperator(Expression operand) : base(ValueKind.Unresolved, operand)
         {
 
         }

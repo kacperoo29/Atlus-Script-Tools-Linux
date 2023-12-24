@@ -30,7 +30,7 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
         private const int GLYPH_TABLE_INDEX_MARKER = 0x80;
 
         // Ease of use accessors
-        private static readonly string sCharsetsBaseDirectoryPath = Path.Combine( AppDomain.CurrentDomain.BaseDirectory, "Charsets" );
+        private static readonly string sCharsetsBaseDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Charsets");
         private static AtlusEncoding sPersona3;
         private static AtlusEncoding sPersona3PortableEFIGS;
         private static AtlusEncoding sPersona4;
@@ -40,21 +40,21 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
         private static AtlusEncoding sPersona5RoyalJapanese;
         private static AtlusEncoding sPersona5RoyalChinese;
 
-        public static AtlusEncoding Persona3 => sPersona3 ?? ( sPersona3 = new AtlusEncoding( "P3" ) );
-        public static AtlusEncoding Persona3PortableEFIGS => sPersona3PortableEFIGS ?? ( sPersona3PortableEFIGS = new AtlusEncoding( "P3P_EFIGS" ) );
-        public static AtlusEncoding Persona4 => sPersona4 ?? ( sPersona4 = new AtlusEncoding( "P4" ) );
-        public static AtlusEncoding Persona5 => sPersona5 ?? ( sPersona5 = new AtlusEncoding( "P5" ) );
-        public static AtlusEncoding Persona5Chinese => sPersona5Chinese ?? ( sPersona5Chinese = new AtlusEncoding( "P5_Chinese" ) );
-        public static AtlusEncoding Persona5RoyalEFIGS => sPersona5RoyalEFIGS ?? ( sPersona5RoyalEFIGS = new AtlusEncoding( "P5R_EFIGS" ) );
-        public static AtlusEncoding Persona5RoyalJapanese => sPersona5RoyalJapanese ?? ( sPersona5RoyalJapanese = new AtlusEncoding( "P5R_Japanese" ) );
-        public static AtlusEncoding Persona5RoyalChinese => sPersona5RoyalChinese ?? ( sPersona5RoyalChinese = new AtlusEncoding( "P5R_Chinese" ) );
+        public static AtlusEncoding Persona3 => sPersona3 ?? (sPersona3 = new AtlusEncoding("P3"));
+        public static AtlusEncoding Persona3PortableEFIGS => sPersona3PortableEFIGS ?? (sPersona3PortableEFIGS = new AtlusEncoding("P3P_EFIGS"));
+        public static AtlusEncoding Persona4 => sPersona4 ?? (sPersona4 = new AtlusEncoding("P4"));
+        public static AtlusEncoding Persona5 => sPersona5 ?? (sPersona5 = new AtlusEncoding("P5"));
+        public static AtlusEncoding Persona5Chinese => sPersona5Chinese ?? (sPersona5Chinese = new AtlusEncoding("P5_Chinese"));
+        public static AtlusEncoding Persona5RoyalEFIGS => sPersona5RoyalEFIGS ?? (sPersona5RoyalEFIGS = new AtlusEncoding("P5R_EFIGS"));
+        public static AtlusEncoding Persona5RoyalJapanese => sPersona5RoyalJapanese ?? (sPersona5RoyalJapanese = new AtlusEncoding("P5R_Japanese"));
+        public static AtlusEncoding Persona5RoyalChinese => sPersona5RoyalChinese ?? (sPersona5RoyalChinese = new AtlusEncoding("P5R_Chinese"));
 
-        public static AtlusEncoding GetByName( string name )
+        public static AtlusEncoding GetByName(string name)
         {
             // Normalize name
             var nameNormalized = name.ToLowerInvariant().Replace(" ", "");
 
-            switch ( nameNormalized )
+            switch (nameNormalized)
             {
                 case "p3":
                 case "persona3":
@@ -94,7 +94,7 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
                 default:
                     {
                         // Try load from charsets directory
-                        return new AtlusEncoding( name );
+                        return new AtlusEncoding(name);
                     }
             }
         }
@@ -102,12 +102,12 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
         private Dictionary<string, CodePoint> mCharToCodePoint;
         private Dictionary<CodePoint, string> mCodePointToChar;
 
-        public override int GetByteCount( char[] chars, int index, int count )
+        public override int GetByteCount(char[] chars, int index, int count)
         {
             int byteCount = 0;
-            for ( int i = index; i < count; i++ )
+            for (int i = index; i < count; i++)
             {
-                if ( chars[i] <= ASCII_RANGE )
+                if (chars[i] <= ASCII_RANGE)
                     byteCount += 1;
                 else
                     byteCount += 2;
@@ -116,11 +116,11 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
             return byteCount;
         }
 
-        public override int GetBytes( char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex )
+        public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
         {
             int byteCount = 0;
 
-            for ( ; charIndex < charCount; charIndex++ )
+            for (; charIndex < charCount; charIndex++)
             {
                 CodePoint codePoint;
                 var c = chars[charIndex].ToString();
@@ -131,12 +131,12 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
                 {
                     codePoint = mCharToCodePoint[c];
                 }
-                catch ( KeyNotFoundException )
+                catch (KeyNotFoundException)
                 {
-                    throw new UnsupportedCharacterException( EncodingName, c );
+                    throw new UnsupportedCharacterException(EncodingName, c);
                 }
 
-                if ( codePoint.HighSurrogate == 0 )
+                if (codePoint.HighSurrogate == 0)
                 {
                     bytes[byteIndex++] = codePoint.LowSurrogate;
                     byteCount += 1;
@@ -153,12 +153,12 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
             return byteCount;
         }
 
-        public override int GetCharCount( byte[] bytes, int index, int count )
+        public override int GetCharCount(byte[] bytes, int index, int count)
         {
             int charCount = 0;
-            for ( ; index < count; ++index, ++charCount )
+            for (; index < count; ++index, ++charCount)
             {
-                if ( ( bytes[index] & GLYPH_TABLE_INDEX_MARKER ) == GLYPH_TABLE_INDEX_MARKER )
+                if ((bytes[index] & GLYPH_TABLE_INDEX_MARKER) == GLYPH_TABLE_INDEX_MARKER)
                 {
                     ++index;
                 }
@@ -167,20 +167,20 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
             return charCount;
         }
 
-        public override int GetChars( byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex )
+        public override int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
         {
-            return GetCharsImpl( bytes, byteIndex, byteCount, chars, charIndex, out _ );
+            return GetCharsImpl(bytes, byteIndex, byteCount, chars, charIndex, out _);
         }
 
-        private int GetCharsImpl( byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex, out bool hasUndefinedChars )
+        private int GetCharsImpl(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex, out bool hasUndefinedChars)
         {
             int charCount = 0;
             hasUndefinedChars = false;
 
-            for ( ; byteIndex < byteCount; byteIndex++ )
+            for (; byteIndex < byteCount; byteIndex++)
             {
                 CodePoint cp;
-                if ( ( bytes[byteIndex] & GLYPH_TABLE_INDEX_MARKER ) == GLYPH_TABLE_INDEX_MARKER )
+                if ((bytes[byteIndex] & GLYPH_TABLE_INDEX_MARKER) == GLYPH_TABLE_INDEX_MARKER)
                 {
                     cp.HighSurrogate = bytes[byteIndex++];
                 }
@@ -191,7 +191,7 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
 
                 cp.LowSurrogate = bytes[byteIndex];
 
-                if ( !mCodePointToChar.TryGetValue( cp, out var c ) )
+                if (!mCodePointToChar.TryGetValue(cp, out var c))
                     hasUndefinedChars = true;
 
                 for (int i = 0; i < c.Length; i++)
@@ -204,32 +204,32 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
             return charCount;
         }
 
-        public override int GetMaxByteCount( int charCount )
+        public override int GetMaxByteCount(int charCount)
         {
             return charCount * 2;
         }
 
-        public override int GetMaxCharCount( int byteCount )
+        public override int GetMaxCharCount(int byteCount)
         {
             return byteCount * 2;
         }
 
-        public bool TryGetString( byte[] bytes, out string value )
+        public bool TryGetString(byte[] bytes, out string value)
         {
-            var chars = new char[GetMaxCharCount( bytes.Length )];
-            GetCharsImpl( bytes, 0, bytes.Length, chars, 0, out bool hasUndefinedChars );
+            var chars = new char[GetMaxCharCount(bytes.Length)];
+            GetCharsImpl(bytes, 0, bytes.Length, chars, 0, out bool hasUndefinedChars);
 
-            if ( hasUndefinedChars )
+            if (hasUndefinedChars)
             {
                 value = null;
                 return false;
             }
 
-            value = new string( chars );
+            value = new string(chars);
             return true;
         }
 
-        public AtlusEncoding( string tableName )
+        public AtlusEncoding(string tableName)
         {
             var tableFilePath = Path.Combine(sCharsetsBaseDirectoryPath, $"{tableName}.tsv");
             if (!File.Exists(tableFilePath))
@@ -299,7 +299,7 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
                         }
                         else
                         {
-                            if ( charString.Length > 1 )
+                            if (charString.Length > 1)
                                 Debug.WriteLine($"WARNING: Character in charset with more than 1 UTF16 character at line {lineNr}: {charString}");
 
                             charTable.Add(charString);

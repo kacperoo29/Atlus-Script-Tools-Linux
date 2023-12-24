@@ -28,7 +28,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// </summary>
         /// <param name="functionTableIndex">The function table index.</param>
         /// <param name="functionIndex">The function index within the table.</param>
-        public FunctionToken( int functionTableIndex, int functionIndex )
+        public FunctionToken(int functionTableIndex, int functionIndex)
         {
             FunctionTableIndex = functionTableIndex;
             FunctionIndex = functionIndex;
@@ -41,7 +41,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// <param name="functionTableIndex">The function table index.</param>
         /// <param name="functionIndex">The function index within the table.</param>
         /// <param name="arguments">The function arguments.</param>
-        public FunctionToken( int functionTableIndex, int functionIndex, List<ushort> arguments )
+        public FunctionToken(int functionTableIndex, int functionIndex, List<ushort> arguments)
         {
             FunctionTableIndex = functionTableIndex;
             FunctionIndex = functionIndex;
@@ -54,7 +54,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// <param name="functionTableIndex">The function table index.</param>
         /// <param name="functionIndex">The function index within the table.</param>
         /// <param name="arguments">The function arguments.</param>
-        public FunctionToken( int functionTableIndex, int functionIndex, params ushort[] arguments )
+        public FunctionToken(int functionTableIndex, int functionIndex, params ushort[] arguments)
         {
             FunctionTableIndex = functionTableIndex;
             FunctionIndex = functionIndex;
@@ -68,10 +68,10 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         public override string ToString()
         {
             string str = $"func_{FunctionTableIndex}_{FunctionIndex}(";
-            for ( int i = 0; i < Arguments.Count; i++ )
+            for (int i = 0; i < Arguments.Count; i++)
             {
                 str += Arguments[i];
-                if ( i + 1 != Arguments.Count )
+                if (i + 1 != Arguments.Count)
                     str += ",";
             }
             str += ")";

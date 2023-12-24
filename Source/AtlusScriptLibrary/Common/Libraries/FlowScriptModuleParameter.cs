@@ -12,7 +12,7 @@ namespace AtlusScriptLibrary.Common.Libraries
 
         public string Description { get; set; }
 
-        [JsonConverter( typeof( CustomStringEnumConverter ) )]
+        [JsonConverter(typeof(CustomStringEnumConverter))]
         public FlowScriptModuleParameterSemantic Semantic { get; set; }
 
         public string DefaultValue { get; set; }

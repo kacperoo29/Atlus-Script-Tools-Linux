@@ -56,8 +56,8 @@ namespace AtlusScriptLibrary.Common.IO
                     break;
                 case SeekOrigin.End:
                     {
-                        if ( offset < mLength || offset > 0 )
-                            throw new ArgumentOutOfRangeException( nameof( offset ) );
+                        if (offset < mLength || offset > 0)
+                            throw new ArgumentOutOfRangeException(nameof(offset));
 
                         mPosition = (mStreamPosition + mLength) - offset;
                     }
@@ -82,7 +82,7 @@ namespace AtlusScriptLibrary.Common.IO
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if ( EndOfStream )
+            if (EndOfStream)
                 return 0;
 
             if ((mPosition + count) > mLength)
@@ -99,15 +99,15 @@ namespace AtlusScriptLibrary.Common.IO
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if ( EndOfStream )
-                throw new IOException( "Attempted to write past end of stream" );
+            if (EndOfStream)
+                throw new IOException("Attempted to write past end of stream");
 
-            if ( ( mPosition + count ) > mLength )
-                throw new IOException( "Attempted to write past end of stream" );
+            if ((mPosition + count) > mLength)
+                throw new IOException("Attempted to write past end of stream");
 
             PushPosition();
             SetUnderlyingStreamPosition();
-            mStream.Write( buffer, offset, count );
+            mStream.Write(buffer, offset, count);
             mPosition += count;
             PopPosition();
         }
@@ -142,7 +142,7 @@ namespace AtlusScriptLibrary.Common.IO
 
         public override int ReadByte()
         {
-            if ( EndOfStream )
+            if (EndOfStream)
                 return -1;
 
             PushPosition();
@@ -156,12 +156,12 @@ namespace AtlusScriptLibrary.Common.IO
 
         public override void WriteByte(byte value)
         {
-            if ( EndOfStream )
-                throw new IOException( "Attempted to write past end of stream" );
+            if (EndOfStream)
+                throw new IOException("Attempted to write past end of stream");
 
             PushPosition();
             SetUnderlyingStreamPosition();
-            mStream.WriteByte( value );
+            mStream.WriteByte(value);
             mPosition++;
             PopPosition();
         }

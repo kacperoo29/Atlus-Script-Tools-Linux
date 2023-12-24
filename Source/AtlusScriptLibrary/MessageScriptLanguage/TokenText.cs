@@ -27,16 +27,16 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// Constructs a new message script line with a list of tokens.
         /// </summary>
         /// <param name="tokens">The list of message script tokens.</param>
-        public TokenText( List<IToken> tokens )
+        public TokenText(List<IToken> tokens)
         {
-            Tokens = tokens ?? throw new ArgumentNullException( nameof( tokens ) );
+            Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
         }
 
         /// <summary>
         /// Constructs a new message script line with a list of tokens.
         /// </summary>
         /// <param name="tokens">The list of message script tokens.</param>
-        public TokenText( params IToken[] tokens )
+        public TokenText(params IToken[] tokens)
         {
             Tokens = tokens.ToList();
         }
@@ -47,7 +47,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// <returns></returns>
         public IEnumerator<IToken> GetEnumerator()
         {
-            return ( ( IEnumerable<IToken> )Tokens ).GetEnumerator();
+            return ((IEnumerable<IToken>)Tokens).GetEnumerator();
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ( ( IEnumerable<IToken> )Tokens ).GetEnumerator();
+            return ((IEnumerable<IToken>)Tokens).GetEnumerator();
         }
     }
 }

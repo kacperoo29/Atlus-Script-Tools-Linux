@@ -18,16 +18,16 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
             Parameters = new List<Parameter>();
         }
 
-        public FunctionDeclaration( IntLiteral index, TypeIdentifier returnType, Identifier identifier, params Parameter[] parameters )
-            : base( DeclarationType.Function, identifier )
+        public FunctionDeclaration(IntLiteral index, TypeIdentifier returnType, Identifier identifier, params Parameter[] parameters)
+            : base(DeclarationType.Function, identifier)
         {
             Index = index;
             ReturnType = returnType;
             Parameters = parameters.ToList();
         }
 
-        public FunctionDeclaration( IntLiteral index, TypeIdentifier returnType, Identifier identifier, List<Parameter> parameters )
-            : base( DeclarationType.Function, identifier )
+        public FunctionDeclaration(IntLiteral index, TypeIdentifier returnType, Identifier identifier, List<Parameter> parameters)
+            : base(DeclarationType.Function, identifier)
         {
             Index = index;
             ReturnType = returnType;
@@ -38,38 +38,38 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         {
             var builder = new StringBuilder();
 
-            builder.Append( $"function( {Index} ) {ReturnType} {Identifier}(" );
-            if ( Parameters.Count > 0 )
-                builder.Append( Parameters[0] );
+            builder.Append($"function( {Index} ) {ReturnType} {Identifier}(");
+            if (Parameters.Count > 0)
+                builder.Append(Parameters[0]);
 
-            for ( int i = 1; i < Parameters.Count; i++ )
+            for (int i = 1; i < Parameters.Count; i++)
             {
-                builder.Append( $", {Parameters[i]}" );
+                builder.Append($", {Parameters[i]}");
             }
 
-            builder.Append( ")" );
+            builder.Append(")");
 
             return builder.ToString();
         }
 
-        public static FunctionDeclaration FromLibraryFunction( FlowScriptModuleFunction libraryFunction )
+        public static FunctionDeclaration FromLibraryFunction(FlowScriptModuleFunction libraryFunction)
         {
             var functionParameters = new List<Parameter>();
-            foreach ( var libraryFunctionParameter in libraryFunction.Parameters )
+            foreach (var libraryFunctionParameter in libraryFunction.Parameters)
             {
-                functionParameters.Add( new Parameter(
+                functionParameters.Add(new Parameter(
                                              ParameterModifier.None,
-                                            new TypeIdentifier( libraryFunctionParameter.Type ),
-                                            new Identifier( libraryFunctionParameter.Name ),
-                                            !string.IsNullOrWhiteSpace( libraryFunctionParameter.DefaultValue ) ? 
-                                                Expression.FromText( libraryFunctionParameter.DefaultValue ) : null ) );
+                                            new TypeIdentifier(libraryFunctionParameter.Type),
+                                            new Identifier(libraryFunctionParameter.Name),
+                                            !string.IsNullOrWhiteSpace(libraryFunctionParameter.DefaultValue) ?
+                                                Expression.FromText(libraryFunctionParameter.DefaultValue) : null));
             }
 
             var functionDeclaration = new FunctionDeclaration(
-                new IntLiteral( libraryFunction.Index ),
-                new TypeIdentifier( libraryFunction.ReturnType ),
-                new Identifier( libraryFunction.Name ),
-                functionParameters );
+                new IntLiteral(libraryFunction.Index),
+                new TypeIdentifier(libraryFunction.ReturnType),
+                new Identifier(libraryFunction.Name),
+                functionParameters);
 
             return functionDeclaration;
         }

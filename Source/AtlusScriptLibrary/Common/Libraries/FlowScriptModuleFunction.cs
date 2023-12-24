@@ -7,7 +7,7 @@ namespace AtlusScriptLibrary.Common.Libraries
 {
     public class FlowScriptModuleFunction
     {
-        [JsonConverter(typeof( HexIntStringJsonConverter ) )]
+        [JsonConverter(typeof(HexIntStringJsonConverter))]
         public int Index { get; set; }
 
         public string ReturnType { get; set; }
@@ -16,10 +16,10 @@ namespace AtlusScriptLibrary.Common.Libraries
 
         public string Description { get; set; }
 
-        [JsonConverter( typeof( HexIntStringJsonConverter ) )]
+        [JsonConverter(typeof(HexIntStringJsonConverter))]
         public int Address { get; set; }
 
-        [JsonConverter( typeof( CustomStringEnumConverter ) )]
+        [JsonConverter(typeof(CustomStringEnumConverter))]
         public FlowScriptModuleFunctionSemantic Semantic { get; set; }
 
         public List<FlowScriptModuleParameter> Parameters { get; set; }

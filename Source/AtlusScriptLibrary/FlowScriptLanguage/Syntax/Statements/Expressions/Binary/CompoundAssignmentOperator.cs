@@ -7,8 +7,8 @@
 
         }
 
-        protected CompoundAssignmentOperator( Expression left, Expression right )
-            : base( left, right )
+        protected CompoundAssignmentOperator(Expression left, Expression right)
+            : base(left, right)
         {
         }
     }

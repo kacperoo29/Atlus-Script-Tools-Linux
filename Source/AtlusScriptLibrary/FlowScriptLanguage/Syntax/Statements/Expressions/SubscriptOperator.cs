@@ -8,7 +8,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
 
         public int Precedence => 2;
 
-        public SubscriptOperator() : base( ValueKind.Unresolved )
+        public SubscriptOperator() : base(ValueKind.Unresolved)
         {
         }
 

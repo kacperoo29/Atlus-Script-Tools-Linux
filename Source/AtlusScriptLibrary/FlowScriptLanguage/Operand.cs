@@ -21,7 +21,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// Constructs a new operand value.
         /// </summary>
         /// <param name="value">The operand value.</param>
-        public Operand( short value )
+        public Operand(short value)
         {
             Kind = ValueKind.Int16;
             mShortValue = value;
@@ -31,7 +31,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// Constructs a new operand value.
         /// </summary>
         /// <param name="value">The operand value.</param>
-        public Operand( int value )
+        public Operand(int value)
         {
             Kind = ValueKind.Int32;
             mIntValue = value;
@@ -41,7 +41,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// Constructs a new operand value.
         /// </summary>
         /// <param name="value">The operand value.</param>
-        public Operand( float value )
+        public Operand(float value)
         {
             Kind = ValueKind.Single;
             mFloatValue = value;
@@ -51,7 +51,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// Constructs a new operand value.
         /// </summary>
         /// <param name="value">The operand value.</param>
-        public Operand( string value )
+        public Operand(string value)
         {
             Kind = ValueKind.String;
             mStringValue = value;
@@ -65,10 +65,10 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         {
             get
             {
-                switch ( Kind )
+                switch (Kind)
                 {
                     case ValueKind.None:
-                        throw new InvalidOperationException( "This operand has no value" );
+                        throw new InvalidOperationException("This operand has no value");
 
                     case ValueKind.Int16:
                         return mShortValue;
@@ -83,35 +83,35 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
                         return mStringValue;
 
                     default:
-                        throw new Exception( "Invalid value type" );
+                        throw new Exception("Invalid value type");
                 }
             }
 
             set
             {
-                switch ( Kind )
+                switch (Kind)
                 {
                     case ValueKind.None:
-                        throw new InvalidOperationException( "This operand has no value" );
+                        throw new InvalidOperationException("This operand has no value");
 
                     case ValueKind.Int16:
-                        mShortValue = ( short )value;
+                        mShortValue = (short)value;
                         break;
 
                     case ValueKind.Int32:
-                        mIntValue = ( int )value;
+                        mIntValue = (int)value;
                         break;
 
                     case ValueKind.Single:
-                        mFloatValue = ( float )value;
+                        mFloatValue = (float)value;
                         break;
 
                     case ValueKind.String:
-                        mStringValue = ( string )value;
+                        mStringValue = (string)value;
                         break;
 
                     default:
-                        throw new Exception( "Invalid value type" );
+                        throw new Exception("Invalid value type");
                 }
             }
         }
@@ -124,16 +124,16 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         {
             get
             {
-                if ( Kind != ValueKind.Int16 )
-                    throw new InvalidOperationException( $"This operand does not have a value of type {ValueKind.Int16}" );
+                if (Kind != ValueKind.Int16)
+                    throw new InvalidOperationException($"This operand does not have a value of type {ValueKind.Int16}");
 
                 return mShortValue;
             }
 
             set
             {
-                if ( Kind != ValueKind.Int16 )
-                    throw new InvalidOperationException( $"This operand does not have a value of type {ValueKind.Int16}" );
+                if (Kind != ValueKind.Int16)
+                    throw new InvalidOperationException($"This operand does not have a value of type {ValueKind.Int16}");
 
                 mShortValue = value;
             }
@@ -147,16 +147,16 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         {
             get
             {
-                if ( Kind != ValueKind.Int32 )
-                    throw new InvalidOperationException( $"This operand does not have a value of type {ValueKind.Int32}" );
+                if (Kind != ValueKind.Int32)
+                    throw new InvalidOperationException($"This operand does not have a value of type {ValueKind.Int32}");
 
                 return mIntValue;
             }
 
             set
             {
-                if ( Kind != ValueKind.Int32 )
-                    throw new InvalidOperationException( $"This operand does not have a value of type {ValueKind.Int32}" );
+                if (Kind != ValueKind.Int32)
+                    throw new InvalidOperationException($"This operand does not have a value of type {ValueKind.Int32}");
 
                 mIntValue = value;
             }
@@ -170,16 +170,16 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         {
             get
             {
-                if ( Kind != ValueKind.Single )
-                    throw new InvalidOperationException( $"This operand does not have a value of type {ValueKind.Single}" );
+                if (Kind != ValueKind.Single)
+                    throw new InvalidOperationException($"This operand does not have a value of type {ValueKind.Single}");
 
                 return mFloatValue;
             }
 
             set
             {
-                if ( Kind != ValueKind.Single )
-                    throw new InvalidOperationException( $"This operand does not have a value of type {ValueKind.Single}" );
+                if (Kind != ValueKind.Single)
+                    throw new InvalidOperationException($"This operand does not have a value of type {ValueKind.Single}");
 
                 mFloatValue = value;
             }
@@ -193,15 +193,15 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         {
             get
             {
-                if ( Kind != ValueKind.String )
-                    throw new InvalidOperationException( $"This operand does not have a value of type {ValueKind.String}" );
+                if (Kind != ValueKind.String)
+                    throw new InvalidOperationException($"This operand does not have a value of type {ValueKind.String}");
 
                 return mStringValue;
             }
             set
             {
-                if ( Kind != ValueKind.String )
-                    throw new InvalidOperationException( $"This operand does not have a value of type {ValueKind.String}" );
+                if (Kind != ValueKind.String)
+                    throw new InvalidOperationException($"This operand does not have a value of type {ValueKind.String}");
 
                 mStringValue = value;
             }
@@ -253,16 +253,16 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
 
         public Operand Clone()
         {
-            switch ( Kind )
+            switch (Kind)
             {
                 case ValueKind.Int16:
-                    return new Operand( mShortValue );
+                    return new Operand(mShortValue);
                 case ValueKind.Int32:
-                    return new Operand( mIntValue );
+                    return new Operand(mIntValue);
                 case ValueKind.Single:
-                    return new Operand( mFloatValue );
+                    return new Operand(mFloatValue);
                 case ValueKind.String:
-                    return new Operand( mStringValue );
+                    return new Operand(mStringValue);
                 default:
                     throw new InvalidOperationException();
             }

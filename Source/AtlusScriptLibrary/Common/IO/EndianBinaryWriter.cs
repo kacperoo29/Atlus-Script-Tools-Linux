@@ -8,11 +8,11 @@ namespace AtlusScriptLibrary.Common.IO
 {
     public class EndianBinaryWriter : BinaryWriter
     {
-        private StringBuilder   mStringBuilder;
-        private Endianness      mEndianness;
-        private bool            mSwap;
-        private Encoding        mEncoding;
-        private Queue<long>     mPosQueue;
+        private StringBuilder mStringBuilder;
+        private Endianness mEndianness;
+        private bool mSwap;
+        private Encoding mEncoding;
+        private Queue<long> mPosQueue;
 
         public Endianness Endianness
         {
@@ -47,7 +47,7 @@ namespace AtlusScriptLibrary.Common.IO
         public EndianBinaryWriter(Stream input, Endianness endianness)
             : base(input)
         {
-            Init( Encoding.ASCII, endianness);
+            Init(Encoding.ASCII, endianness);
         }
 
         public EndianBinaryWriter(Stream input, Encoding encoding, Endianness endianness)
@@ -314,7 +314,7 @@ namespace AtlusScriptLibrary.Common.IO
                             Marshal.StructureToPtr(EndiannessHelper.Swap(value[i]), (IntPtr)(ptr + (i * typeSize)), true);
                         else
                             Marshal.StructureToPtr(value[i], (IntPtr)(ptr + (i * typeSize)), true);
-                    }             
+                    }
                 }
             }
 

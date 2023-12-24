@@ -7,8 +7,8 @@
 
         }
 
-        public MultiplicationAssignmentOperator( Expression left, Expression right )
-            : base( left, right )
+        public MultiplicationAssignmentOperator(Expression left, Expression right)
+            : base(left, right)
         {
         }
 

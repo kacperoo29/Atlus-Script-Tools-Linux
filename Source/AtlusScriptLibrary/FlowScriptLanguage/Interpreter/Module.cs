@@ -8,6 +8,6 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Interpreter
 {
     public class Module
     {
-        public Dictionary< int, Action< FlowScriptInterpreter > > Functions;
+        public Dictionary<int, Action<FlowScriptInterpreter>> Functions;
     }
 }

@@ -10,12 +10,12 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
 {
     public static class NameFormatter
     {
-        public static string GenerateVariableName( VariableModifierKind modifier, ValueKind kind, short index, bool isTopLevel )
+        public static string GenerateVariableName(VariableModifierKind modifier, ValueKind kind, short index, bool isTopLevel)
         {
-            switch ( kind )
+            switch (kind)
             {
                 case ValueKind.Int:
-                    switch ( modifier )
+                    switch (modifier)
                     {
                         case VariableModifierKind.Local:
                             return isTopLevel ? $"sVar{index}" : $"var{index}";
@@ -24,7 +24,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                     }
                     break;
                 case ValueKind.Float:
-                    switch ( modifier )
+                    switch (modifier)
                     {
                         case VariableModifierKind.Local:
                             return isTopLevel ? $"sfVar{index}" : $"fVar{index}";
@@ -34,13 +34,13 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                     break;
             }
 
-            Debug.Assert( false );
+            Debug.Assert(false);
             return null;
         }
 
-        public static string GenerateParameterName( ValueKind kind, int index )
+        public static string GenerateParameterName(ValueKind kind, int index)
         {
-            switch ( kind )
+            switch (kind)
             {
                 case ValueKind.Int:
                     return $"param{index}";
@@ -48,7 +48,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                     return $"fParam{index}";
             }
 
-            Debug.Assert( false );
+            Debug.Assert(false);
             return null;
         }
     }

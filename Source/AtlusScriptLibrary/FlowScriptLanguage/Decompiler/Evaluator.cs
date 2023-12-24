@@ -60,32 +60,32 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
 
         public Evaluator()
         {
-            mLogger = new Logger( nameof( Evaluator ) );
+            mLogger = new Logger(nameof(Evaluator));
         }
 
         /// <summary>
         /// Adds a decompiler log listener. Use this if you want to see what went wrong during decompilation.
         /// </summary>
         /// <param name="listener">The listener to add.</param>
-        public void AddListener( LogListener listener )
+        public void AddListener(LogListener listener)
         {
-            listener.Subscribe( mLogger );
+            listener.Subscribe(mLogger);
         }
 
         //
         // FlowScript evaluation
         //
-        public bool TryEvaluateScript( FlowScript flowScript, out EvaluationResult result )
+        public bool TryEvaluateScript(FlowScript flowScript, out EvaluationResult result)
         {
-            LogInfo( "Start evaluating FlowScript" );
-            InitializeScriptEvaluationState( flowScript );
+            LogInfo("Start evaluating FlowScript");
+            InitializeScriptEvaluationState(flowScript);
 
             PushScope();
 
             // Register functions used in the script       
-            if ( !TryRegisterUsedFunctions() )
+            if (!TryRegisterUsedFunctions())
             {
-                LogError( "Failed to register functions" );
+                LogError("Failed to register functions");
                 result = null;
                 return false;
             }
@@ -94,37 +94,37 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             RegisterTopLevelVariables();
 
             // Start building result
-            result = new EvaluationResult( flowScript, Scope );
-            result.Functions.AddRange( mFunctions.Values );
+            result = new EvaluationResult(flowScript, Scope);
+            result.Functions.AddRange(mFunctions.Values);
 
             // Pre-evaluating stuff
-            var infos = PreEvaluateProcedures( flowScript );
-            var problematicInfos = infos.Where( x => x.Snapshots.Any( y => y.StackBalance < 1 ) );
+            var infos = PreEvaluateProcedures(flowScript);
+            var problematicInfos = infos.Where(x => x.Snapshots.Any(y => y.StackBalance < 1));
 
             // Evaluate procedures
-            LogInfo( "Evaluating procedures" );
-            foreach ( var procedure in flowScript.Procedures )
+            LogInfo("Evaluating procedures");
+            foreach (var procedure in flowScript.Procedures)
             {
-                if ( !TryEvaluateProcedure( procedure, out var evaluatedProcedure ) )
+                if (!TryEvaluateProcedure(procedure, out var evaluatedProcedure))
                 {
                     result = null;
                     return false;
                 }
 
-                result.Procedures.Add( evaluatedProcedure );
+                result.Procedures.Add(evaluatedProcedure);
             }
 
             PopScope();
 
-            LogInfo( "Done evaluating FlowScript" );
+            LogInfo("Done evaluating FlowScript");
             return true;
         }
 
-        private void InitializeScriptEvaluationState( FlowScript flowScript )
+        private void InitializeScriptEvaluationState(FlowScript flowScript)
         {
             mScript = flowScript;
             mFunctions = new Dictionary<int, FunctionDeclaration>();
-            mProcedures = new Dictionary< int, ProcedureDeclaration >();
+            mProcedures = new Dictionary<int, ProcedureDeclaration>();
             mScopeStack = new Stack<EvaluatedScope>();
         }
 
@@ -133,102 +133,102 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
         //
         private void PushScope()
         {
-            if ( mScopeStack.Count != 0 )
-                mScopeStack.Push( new EvaluatedScope( Scope ) );
+            if (mScopeStack.Count != 0)
+                mScopeStack.Push(new EvaluatedScope(Scope));
             else
-                mScopeStack.Push( new EvaluatedScope( null ) );
+                mScopeStack.Push(new EvaluatedScope(null));
         }
 
         private void PopScope()
         {
-            mScopeStack.Push( mScopeStack.Pop() );
+            mScopeStack.Push(mScopeStack.Pop());
         }
 
-        private bool TryDeclareVariable( VariableModifierKind modifierKind, ValueKind valueKind, short index, VariableIndexKind indexKind, out VariableDeclaration declaration )
+        private bool TryDeclareVariable(VariableModifierKind modifierKind, ValueKind valueKind, short index, VariableIndexKind indexKind, out VariableDeclaration declaration)
         {
             var modifier = indexKind == VariableIndexKind.Implicit
-                ? new VariableModifier( modifierKind )
-                : new VariableModifier( modifierKind, new IntLiteral(index) );
+                ? new VariableModifier(modifierKind)
+                : new VariableModifier(modifierKind, new IntLiteral(index));
 
-            var type = new TypeIdentifier( valueKind );
-            var identifier = new Identifier( valueKind, NameFormatter.GenerateVariableName( modifierKind, valueKind, index, Scope.Parent == null ) );
-            declaration = new VariableDeclaration( modifier, type, identifier, null );
+            var type = new TypeIdentifier(valueKind);
+            var identifier = new Identifier(valueKind, NameFormatter.GenerateVariableName(modifierKind, valueKind, index, Scope.Parent == null));
+            declaration = new VariableDeclaration(modifier, type, identifier, null);
 
-            switch ( modifierKind )
+            switch (modifierKind)
             {
                 case VariableModifierKind.Local:
-                    switch ( valueKind )
+                    switch (valueKind)
                     {
                         case ValueKind.Int:
-                            if ( Scope.TryGetLocalIntVariable( index, out var _ ) )
+                            if (Scope.TryGetLocalIntVariable(index, out var _))
                             {
-                                LogError( $"Attempted to declare already declared local int variable: '{index}'" );
+                                LogError($"Attempted to declare already declared local int variable: '{index}'");
                                 return false;
                             }
 
-                            return Scope.TryDeclareLocalIntVariable( index, declaration );
+                            return Scope.TryDeclareLocalIntVariable(index, declaration);
                         case ValueKind.Float:
-                            if ( Scope.TryGetLocalFloatVariable( index, out var _ ) )
+                            if (Scope.TryGetLocalFloatVariable(index, out var _))
                             {
-                                LogError( $"Attempted to declare already declared local float variable: '{index}'" );
+                                LogError($"Attempted to declare already declared local float variable: '{index}'");
                                 return false;
                             }
 
-                            return Scope.TryDeclareLocalFloatVariable( index, declaration );
+                            return Scope.TryDeclareLocalFloatVariable(index, declaration);
                         default:
-                            LogError( $"Variable type not implemented: { type }" );
+                            LogError($"Variable type not implemented: {type}");
                             return false;
                     }
                 case VariableModifierKind.Global:
-                    switch ( valueKind )
+                    switch (valueKind)
                     {
                         case ValueKind.Int:
-                            if ( Scope.TryGetGlobalIntVariable( index, out var _ ) )
+                            if (Scope.TryGetGlobalIntVariable(index, out var _))
                             {
-                                LogError( $"Attempted to declare already declared global int variable: '{index}'" );
+                                LogError($"Attempted to declare already declared global int variable: '{index}'");
                                 return false;
                             }
 
-                            return Scope.TryDeclareGlobalIntVariable( index, declaration );
+                            return Scope.TryDeclareGlobalIntVariable(index, declaration);
                         case ValueKind.Float:
 
-                            if ( Scope.TryGetGlobalFloatVariable( index, out var _ ) )
+                            if (Scope.TryGetGlobalFloatVariable(index, out var _))
                             {
-                                LogError( $"Attempted to declare already declared global float variable: '{index}'" );
+                                LogError($"Attempted to declare already declared global float variable: '{index}'");
                                 return false;
                             }
 
-                            return Scope.TryDeclareGlobalFloatVariable( index, declaration );
+                            return Scope.TryDeclareGlobalFloatVariable(index, declaration);
                         default:
-                            LogError( $"Variable value type not implemented: { valueKind }" );
+                            LogError($"Variable value type not implemented: {valueKind}");
                             return false;
                     }
                 default:
-                    LogError( $"Variable modifier type not implemented: { modifierKind }" );
+                    LogError($"Variable modifier type not implemented: {modifierKind}");
                     return false;
             }
         }
 
-        private bool IsVariableDeclared( VariableModifierKind modifierKind, ValueKind valueKind, short index )
+        private bool IsVariableDeclared(VariableModifierKind modifierKind, ValueKind valueKind, short index)
         {
-            switch ( modifierKind )
+            switch (modifierKind)
             {
                 case VariableModifierKind.Local:
-                    switch ( valueKind )
+                    switch (valueKind)
                     {
                         case ValueKind.Int:
-                            return Scope.TryGetLocalIntVariable( index, out _ );
+                            return Scope.TryGetLocalIntVariable(index, out _);
                         case ValueKind.Float:
-                            return ( Scope.TryGetLocalFloatVariable( index, out _ ) );
+                            return (Scope.TryGetLocalFloatVariable(index, out _));
                     }
                     break;
                 case VariableModifierKind.Global:
-                    switch ( valueKind )
+                    switch (valueKind)
                     {
                         case ValueKind.Int:
-                            return Scope.TryGetGlobalIntVariable( index, out _ );
+                            return Scope.TryGetGlobalIntVariable(index, out _);
                         case ValueKind.Float:
-                            return Scope.TryGetGlobalFloatVariable( index, out _ );
+                            return Scope.TryGetGlobalFloatVariable(index, out _);
                     }
                     break;
             }
@@ -240,35 +240,35 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
 
         private void RegisterTopLevelVariables()
         {
-            LogInfo( "Registering top level variables" );
+            LogInfo("Registering top level variables");
 
             var foundIntVariables = new Dictionary<int, (Procedure Procedure, VariableModifierKind Modifier, ValueKind Type)>();
             var foundFloatVariables = new Dictionary<int, (Procedure Procedure, VariableModifierKind Modifier, ValueKind Type)>();
 
-            void DeclareVariableIfNotDeclared( (Procedure Procedure, VariableModifierKind Modifier, ValueKind Type) context, short index, VariableIndexKind indexKind )
+            void DeclareVariableIfNotDeclared((Procedure Procedure, VariableModifierKind Modifier, ValueKind Type) context, short index, VariableIndexKind indexKind)
             {
                 // If the procedures are different, then this variable can't be local to the scope of the procedure
-                if ( !IsVariableDeclared( context.Modifier, context.Type, index ) )
+                if (!IsVariableDeclared(context.Modifier, context.Type, index))
                 {
-                    var result = TryDeclareVariable( context.Modifier, context.Type, index, indexKind, out _ );
-                    Debug.Assert( result );
+                    var result = TryDeclareVariable(context.Modifier, context.Type, index, indexKind, out _);
+                    Debug.Assert(result);
                 }
             }
 
-            foreach ( var procedure in mScript.Procedures )
+            foreach (var procedure in mScript.Procedures)
             {
-                foreach ( var instruction in procedure.Instructions )
+                foreach (var instruction in procedure.Instructions)
                 {
                     var type = ValueKind.Int;
-                    if ( instruction.Opcode == Opcode.POPFX ||
+                    if (instruction.Opcode == Opcode.POPFX ||
                          instruction.Opcode == Opcode.PUSHIF ||
                          instruction.Opcode == Opcode.PUSHLFX ||
-                         instruction.Opcode == Opcode.POPLFX )
+                         instruction.Opcode == Opcode.POPLFX)
                     {
                         type = ValueKind.Float;
                     }
 
-                    switch ( instruction.Opcode )
+                    switch (instruction.Opcode)
                     {
                         case Opcode.PUSHIX:
                         case Opcode.PUSHIF:
@@ -280,45 +280,45 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                         case Opcode.POPLFX:
                             {
                                 var modifier = VariableModifierKind.Global;
-                                if ( instruction.Opcode == Opcode.POPLIX ||
+                                if (instruction.Opcode == Opcode.POPLIX ||
                                      instruction.Opcode == Opcode.PUSHLIX ||
                                      instruction.Opcode == Opcode.POPLFX ||
-                                     instruction.Opcode == Opcode.PUSHLFX )
+                                     instruction.Opcode == Opcode.PUSHLFX)
                                 {
                                     modifier = VariableModifierKind.Local;
                                 }
 
                                 var index = instruction.Operand.Int16Value;
 
-                                if ( modifier != VariableModifierKind.Global && type == ValueKind.Int && foundIntVariables.TryGetValue( index, out var context ) )
+                                if (modifier != VariableModifierKind.Global && type == ValueKind.Int && foundIntVariables.TryGetValue(index, out var context))
                                 {
                                     // Check if it was declared in a different procedure than the one we're currently processing
-                                    if ( procedure != context.Procedure )
+                                    if (procedure != context.Procedure)
                                     {
                                         // If the procedures are different, then this variable can't be local to the scope of the procedure
-                                        DeclareVariableIfNotDeclared( context, index, VariableIndexKind.Implicit );
+                                        DeclareVariableIfNotDeclared(context, index, VariableIndexKind.Implicit);
                                     }
                                 }
-                                else if ( modifier != VariableModifierKind.Global && type == ValueKind.Float && foundFloatVariables.TryGetValue( index, out context ) )
+                                else if (modifier != VariableModifierKind.Global && type == ValueKind.Float && foundFloatVariables.TryGetValue(index, out context))
                                 {
                                     // Check if it was declared in a different procedure than the one we're currently processing
-                                    if ( procedure != context.Procedure )
+                                    if (procedure != context.Procedure)
                                     {
                                         // If the procedures are different, then this variable can't be local to the scope of the procedure
-                                        DeclareVariableIfNotDeclared( context, index, VariableIndexKind.Implicit );
+                                        DeclareVariableIfNotDeclared(context, index, VariableIndexKind.Implicit);
                                     }
                                 }
                                 else
-                                {                                 
+                                {
                                     context = (procedure, modifier, type);
 
-                                    if ( modifier == VariableModifierKind.Global )
+                                    if (modifier == VariableModifierKind.Global)
                                     {
                                         // If it's a global, declare it anyway
-                                        DeclareVariableIfNotDeclared( context, index, VariableIndexKind.Explicit );
+                                        DeclareVariableIfNotDeclared(context, index, VariableIndexKind.Explicit);
                                     }
 
-                                    if ( type == ValueKind.Int )
+                                    if (type == ValueKind.Int)
                                         foundIntVariables[index] = context;
                                     else
                                         foundFloatVariables[index] = context;
@@ -333,23 +333,23 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
 
         private bool TryRegisterUsedFunctions()
         {
-            LogInfo( "Registering functions" );
-            foreach ( var instruction in mScript.Procedures.SelectMany( x => x.Instructions ).Where( x => x.Opcode == Opcode.COMM ) )
+            LogInfo("Registering functions");
+            foreach (var instruction in mScript.Procedures.SelectMany(x => x.Instructions).Where(x => x.Opcode == Opcode.COMM))
             {
                 var index = instruction.Operand.Int16Value;
-                if ( mFunctions.ContainsKey( index ) )
+                if (mFunctions.ContainsKey(index))
                     continue;
 
                 // Declare function
                 var function = Library.FlowScriptModules
-                                              .SelectMany( x => x.Functions )
-                                              .SingleOrDefault( x => x.Index == index );
+                                              .SelectMany(x => x.Functions)
+                                              .SingleOrDefault(x => x.Index == index);
 
-                if ( function == null )
+                if (function == null)
                 {
-                    LogError( $"Referenced unknown function: '{index}'" );
+                    LogError($"Referenced unknown function: '{index}'");
 
-                    if ( StrictMode )
+                    if (StrictMode)
                         return false;
 
                     // Attempt to recover
@@ -363,103 +363,103 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                     };
                 }
 
-                mFunctions[index] = FunctionDeclaration.FromLibraryFunction( function );
+                mFunctions[index] = FunctionDeclaration.FromLibraryFunction(function);
             }
 
             return true;
         }
 
         // Procedure pre-evaluation
-        private List<ProcedurePreEvaluationInfo> PreEvaluateProcedures( FlowScript flowScript )
+        private List<ProcedurePreEvaluationInfo> PreEvaluateProcedures(FlowScript flowScript)
         {
             var preEvaluationInfos = new List<ProcedurePreEvaluationInfo>();
-            foreach ( var procedure in flowScript.Procedures )
+            foreach (var procedure in flowScript.Procedures)
             {
-                var info = PreEvaluateProcedure( procedure );
-                preEvaluationInfos.Add( info );
+                var info = PreEvaluateProcedure(procedure);
+                preEvaluationInfos.Add(info);
             }
 
             return preEvaluationInfos;
         }
 
-        private ProcedurePreEvaluationInfo PreEvaluateProcedure( Procedure procedure )
+        private ProcedurePreEvaluationInfo PreEvaluateProcedure(Procedure procedure)
         {
             var evaluationInfo = new ProcedurePreEvaluationInfo();
             evaluationInfo.Procedure = procedure;
-            evaluationInfo.Snapshots = GetStackSnapshots( procedure );
+            evaluationInfo.Snapshots = GetStackSnapshots(procedure);
 
             return evaluationInfo;
         }
 
-        private List<StackSnapshot> GetStackSnapshots( Procedure procedure )
+        private List<StackSnapshot> GetStackSnapshots(Procedure procedure)
         {
             var snapshots = new List<StackSnapshot>();
 
             var previousSnapshot = new StackSnapshot();
             previousSnapshot.StackBalance = 1;
             previousSnapshot.Stack = new Stack<StackValueType>();
-            previousSnapshot.Stack.Push( StackValueType.Return );
+            previousSnapshot.Stack.Push(StackValueType.Return);
 
             FunctionDeclaration lastFunction = null;
 
-            foreach ( var instruction in procedure.Instructions )
+            foreach (var instruction in procedure.Instructions)
             {
-                var snapshot = PreEvaluateInstruction( instruction, previousSnapshot, ref lastFunction );
-                snapshots.Add( snapshot );
+                var snapshot = PreEvaluateInstruction(instruction, previousSnapshot, ref lastFunction);
+                snapshots.Add(snapshot);
                 previousSnapshot = snapshot;
             }
 
             return snapshots;
         }
 
-        private StackSnapshot PreEvaluateInstruction( Instruction instruction, StackSnapshot previousSnapshot, ref FunctionDeclaration lastFunction )
+        private StackSnapshot PreEvaluateInstruction(Instruction instruction, StackSnapshot previousSnapshot, ref FunctionDeclaration lastFunction)
         {
             var stack = new Stack<StackValueType>();
-            foreach ( var valueType in previousSnapshot.Stack.Reverse() )
-                stack.Push( valueType );
+            foreach (var valueType in previousSnapshot.Stack.Reverse())
+                stack.Push(valueType);
 
             int stackBalance = previousSnapshot.StackBalance;
 
-            switch ( instruction.Opcode )
+            switch (instruction.Opcode)
             {
                 case Opcode.PUSHI:
-                    stack.Push( StackValueType.Int );
+                    stack.Push(StackValueType.Int);
                     ++stackBalance;
                     break;
                 case Opcode.PUSHF:
-                    stack.Push( StackValueType.Float );
+                    stack.Push(StackValueType.Float);
                     ++stackBalance;
                     break;
                 case Opcode.PUSHIX:
-                    stack.Push( StackValueType.Int );
+                    stack.Push(StackValueType.Int);
                     ++stackBalance;
                     break;
                 case Opcode.PUSHIF:
-                    stack.Push( StackValueType.Float );
+                    stack.Push(StackValueType.Float);
                     ++stackBalance;
                     break;
                 case Opcode.PUSHREG:
                     {
-                        switch ( lastFunction.ReturnType.ValueKind )
+                        switch (lastFunction.ReturnType.ValueKind)
                         {
                             case ValueKind.Bool:
                             case ValueKind.Int:
-                                stack.Push( StackValueType.Int );
+                                stack.Push(StackValueType.Int);
                                 break;
                             case ValueKind.Float:
-                                stack.Push( StackValueType.Float );
+                                stack.Push(StackValueType.Float);
                                 break;
                         }
                         ++stackBalance;
                     }
                     break;
                 case Opcode.POPIX:
-                    if ( stack.Count != 0 )
+                    if (stack.Count != 0)
                         stack.Pop();
                     --stackBalance;
                     break;
                 case Opcode.POPFX:
-                    if ( stack.Count != 0 )
+                    if (stack.Count != 0)
                         stack.Pop();
                     --stackBalance;
                     break;
@@ -468,9 +468,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 case Opcode.COMM:
                     {
                         short index = instruction.Operand.Int16Value;
-                        foreach ( var parameter in mFunctions[index].Parameters )
+                        foreach (var parameter in mFunctions[index].Parameters)
                         {
-                            if ( stack.Count != 0 )
+                            if (stack.Count != 0)
                                 stack.Pop();
                             --stackBalance;
                         }
@@ -493,7 +493,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 case Opcode.MUL:
                 case Opcode.DIV:
                     {
-                        if ( stack.Count != 0 )
+                        if (stack.Count != 0)
                             stack.Pop();
                         --stackBalance;
                     }
@@ -510,42 +510,42 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 case Opcode.SE:
                 case Opcode.LE:
                     {
-                        if ( stack.Count != 0 )
+                        if (stack.Count != 0)
                             stack.Pop();
                         --stackBalance;
                     }
                     break;
                 case Opcode.IF:
                     {
-                        if ( stack.Count != 0 )
+                        if (stack.Count != 0)
                             stack.Pop();
                         --stackBalance;
                     }
                     break;
                 case Opcode.PUSHIS:
-                    stack.Push( StackValueType.Int );
+                    stack.Push(StackValueType.Int);
                     ++stackBalance;
                     break;
                 case Opcode.PUSHLIX:
-                    stack.Push( StackValueType.Int );
+                    stack.Push(StackValueType.Int);
                     ++stackBalance;
                     break;
                 case Opcode.PUSHLFX:
-                    stack.Push( StackValueType.Float );
+                    stack.Push(StackValueType.Float);
                     ++stackBalance;
                     break;
                 case Opcode.POPLIX:
-                    if ( stack.Count != 0 )
+                    if (stack.Count != 0)
                         stack.Pop();
                     --stackBalance;
                     break;
                 case Opcode.POPLFX:
-                    if ( stack.Count != 0 )
+                    if (stack.Count != 0)
                         stack.Pop();
                     --stackBalance;
                     break;
                 case Opcode.PUSHSTR:
-                    stack.Push( StackValueType.String );
+                    stack.Push(StackValueType.String);
                     ++stackBalance;
                     break;
             }
@@ -560,36 +560,36 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
         //
         // Procedure evaluation
         //
-        private void InitializeProcedureEvaluationState( Procedure procedure )
+        private void InitializeProcedureEvaluationState(Procedure procedure)
         {
             mProcedure = procedure;
             mInstructions = procedure.Instructions;
             mEvaluatedInstructionIndex = 0;
             mEvaluationStatementStack = new Stack<EvaluatedStatement>();
-            mExpressionStack = new Stack< EvaluatedStatement >();
+            mExpressionStack = new Stack<EvaluatedStatement>();
             mReturnKind = ValueKind.Void;
             mParameters = new List<Parameter>();
             mProcedureLocalVariables = new List<EvaluatedIdentifierReference>();
 
             // Add symbolic return address onto the stack
             PushStatement(
-                new Identifier( "<>__ReturnAddress" ) );
+                new Identifier("<>__ReturnAddress"));
         }
 
-        private bool TryEvaluateProcedure( Procedure procedure, out EvaluatedProcedure evaluatedProcedure )
+        private bool TryEvaluateProcedure(Procedure procedure, out EvaluatedProcedure evaluatedProcedure)
         {
-            LogInfo( $"Evaluating procedure: '{procedure.Name}'" );
+            LogInfo($"Evaluating procedure: '{procedure.Name}'");
 
             // Initialize
-            InitializeProcedureEvaluationState( procedure );
+            InitializeProcedureEvaluationState(procedure);
 
             // Enter procedure scope
             PushScope();
 
             // Evaluate instructions
-            if ( !TryEvaluateInstructions() )
+            if (!TryEvaluateInstructions())
             {
-                LogError( $"Failed to evaluate procedure '{ procedure.Name }''s instructions" );
+                LogError($"Failed to evaluate procedure '{procedure.Name}''s instructions");
                 evaluatedProcedure = null;
                 return false;
             }
@@ -599,10 +599,10 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             evaluatedStatements.Reverse();
 
             var first = evaluatedStatements.FirstOrDefault();
-            if ( first != null && first.Statement is Identifier identifier )
+            if (first != null && first.Statement is Identifier identifier)
             {
-                if ( identifier.Text == "<>__ReturnAddress" )
-                    evaluatedStatements.Remove( first );
+                if (identifier.Text == "<>__ReturnAddress")
+                    evaluatedStatements.Remove(first);
             }
 
             // Build result
@@ -628,11 +628,11 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
         private bool TryEvaluateInstructions()
         {
             // Evaluate each instruction
-            foreach ( var instruction in mProcedure.Instructions )
+            foreach (var instruction in mProcedure.Instructions)
             {
-                if ( !TryEvaluateInstruction( instruction ) )
+                if (!TryEvaluateInstruction(instruction))
                 {
-                    LogError( $"Failed to evaluate instruction: { instruction }" );
+                    LogError($"Failed to evaluate instruction: {instruction}");
                     return false;
                 }
 
@@ -642,22 +642,22 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             return true;
         }
 
-        private bool TryEvaluateInstruction( Instruction instruction )
+        private bool TryEvaluateInstruction(Instruction instruction)
         {
             //LogInfo( $"Evaluating instruction: {instruction}" );
             // Todo: implement expression stack
 
-            switch ( instruction.Opcode )
+            switch (instruction.Opcode)
             {
                 // Push integer to stack
                 case Opcode.PUSHI:
-                    PushStatement( new IntLiteral( instruction.Operand.Int32Value) );
+                    PushStatement(new IntLiteral(instruction.Operand.Int32Value));
                     ++mRealStackCount;
                     break;
 
                 // Push float to stack
                 case Opcode.PUSHF:
-                    PushStatement( new FloatLiteral( instruction.Operand.SingleValue) );
+                    PushStatement(new FloatLiteral(instruction.Operand.SingleValue));
                     ++mRealStackCount;
                     break;
 
@@ -665,19 +665,19 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 case Opcode.PUSHIX:
                     {
                         short index = instruction.Operand.Int16Value;
-                        if ( !Scope.TryGetGlobalIntVariable( index, out var declaration ) )
+                        if (!Scope.TryGetGlobalIntVariable(index, out var declaration))
                         {
-                            LogError( $"Referenced undeclared global int variable: '{index}'" );
+                            LogError($"Referenced undeclared global int variable: '{index}'");
                             //return false;
 
-                            if ( !TryDeclareVariable( VariableModifierKind.Global, ValueKind.Int, index, VariableIndexKind.Explicit, out declaration ) )
+                            if (!TryDeclareVariable(VariableModifierKind.Global, ValueKind.Int, index, VariableIndexKind.Explicit, out declaration))
                             {
-                                LogError( "Failed to declare global int variable for PUSHIX" );
+                                LogError("Failed to declare global int variable for PUSHIX");
                                 return false;
                             }
                         }
 
-                        PushStatement( declaration.Identifier );
+                        PushStatement(declaration.Identifier);
                         ++mRealStackCount;
                     }
                     break;
@@ -686,19 +686,19 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 case Opcode.PUSHIF:
                     {
                         short index = instruction.Operand.Int16Value;
-                        if ( !Scope.TryGetGlobalFloatVariable( index, out var declaration ) )
+                        if (!Scope.TryGetGlobalFloatVariable(index, out var declaration))
                         {
-                            LogError( $"Referenced undeclared global float variable: '{index}'" );
+                            LogError($"Referenced undeclared global float variable: '{index}'");
                             //return false;
 
-                            if ( !TryDeclareVariable( VariableModifierKind.Global, ValueKind.Float, index, VariableIndexKind.Explicit, out declaration ) )
+                            if (!TryDeclareVariable(VariableModifierKind.Global, ValueKind.Float, index, VariableIndexKind.Explicit, out declaration))
                             {
-                                LogError( "Failed to declare global float variable for PUSHIF" );
+                                LogError("Failed to declare global float variable for PUSHIF");
                                 return false;
                             }
                         }
 
-                        PushStatement( declaration.Identifier );
+                        PushStatement(declaration.Identifier);
                         ++mRealStackCount;
                     }
                     break;
@@ -706,21 +706,21 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 // Push return value of last function to stack
                 case Opcode.PUSHREG:
                     {
-                        if ( mLastFunctionCall == null )
+                        if (mLastFunctionCall == null)
                         {
                             // P3P does this
                             // Compiler bug?
-                            LogError( "PUSHREG before a function call!" );
-                            PushExpression( new IntLiteral( 0 ) );
+                            LogError("PUSHREG before a function call!");
+                            PushExpression(new IntLiteral(0));
                         }
                         else
                         {
-                            if ( mLastFunctionCall.ExpressionValueKind == ValueKind.Void )
+                            if (mLastFunctionCall.ExpressionValueKind == ValueKind.Void)
                             {
-                                LogError( $"Result of void-returning function '{mLastFunctionCall.Identifier}' was used" );
+                                LogError($"Result of void-returning function '{mLastFunctionCall.Identifier}' was used");
                             }
 
-                            PushStatement( mLastFunctionCall );
+                            PushStatement(mLastFunctionCall);
                         }
 
                         ++mRealStackCount;
@@ -732,23 +732,23 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                     {
                         short index = instruction.Operand.Int16Value;
 
-                        if ( !Scope.TryGetGlobalIntVariable( index, out var declaration ) )
+                        if (!Scope.TryGetGlobalIntVariable(index, out var declaration))
                         {
                             // variable hasn't been declared yet
-                            if ( !TryDeclareVariable( VariableModifierKind.Global, ValueKind.Int, index, VariableIndexKind.Explicit, out declaration ) )
+                            if (!TryDeclareVariable(VariableModifierKind.Global, ValueKind.Int, index, VariableIndexKind.Explicit, out declaration))
                             {
-                                LogError( "Failed to declare global int variable for POPIX" );
+                                LogError("Failed to declare global int variable for POPIX");
                                 return false;
                             }
                         }
 
-                        if ( !TryPopExpression( out var value ) )
+                        if (!TryPopExpression(out var value))
                         {
-                            LogError( $"Failed to pop expression for global int variable assignment" );
+                            LogError($"Failed to pop expression for global int variable assignment");
                             return false;
                         }
 
-                        PushStatement( new AssignmentOperator( declaration.Identifier, value ) );
+                        PushStatement(new AssignmentOperator(declaration.Identifier, value));
                         --mRealStackCount;
                     }
                     break;
@@ -758,23 +758,23 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                     {
                         short index = instruction.Operand.Int16Value;
 
-                        if ( !Scope.TryGetGlobalFloatVariable( index, out var declaration ) )
+                        if (!Scope.TryGetGlobalFloatVariable(index, out var declaration))
                         {
                             // variable hasn't been declared yet
-                            if ( !TryDeclareVariable( VariableModifierKind.Global, ValueKind.Float, index, VariableIndexKind.Explicit, out declaration ) )
+                            if (!TryDeclareVariable(VariableModifierKind.Global, ValueKind.Float, index, VariableIndexKind.Explicit, out declaration))
                             {
-                                LogError( "Failed to declare global float variable for POPIX" );
+                                LogError("Failed to declare global float variable for POPIX");
                                 return false;
                             }
                         }
 
-                        if ( !TryPopExpression( out var value ) )
+                        if (!TryPopExpression(out var value))
                         {
-                            LogError( "Failed to pop expression for global float variable assignment" );
+                            LogError("Failed to pop expression for global float variable assignment");
                             return false;
                         }
 
-                        PushStatement( new AssignmentOperator( declaration.Identifier, value ) );
+                        PushStatement(new AssignmentOperator(declaration.Identifier, value));
                         --mRealStackCount;
                     }
                     break;
@@ -788,52 +788,52 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 case Opcode.COMM:
                     {
                         short index = instruction.Operand.Int16Value;
-                        if ( !mFunctions.TryGetValue( index, out var function ) )
+                        if (!mFunctions.TryGetValue(index, out var function))
                         {
-                            LogError( "Unknown function: registration of functions must have failed" );
+                            LogError("Unknown function: registration of functions must have failed");
                             return false;
                         }
 
                         var arguments = new List<Argument>();
-                        foreach ( var parameter in function.Parameters )
+                        foreach (var parameter in function.Parameters)
                         {
-                            if ( !TryPopExpression( out var argument ) )
+                            if (!TryPopExpression(out var argument))
                             {
-                                LogError( $"Failed to pop argument off stack for parameter: { parameter } of function: { function }" );
-                                if ( StrictMode )
+                                LogError($"Failed to pop argument off stack for parameter: {parameter} of function: {function}");
+                                if (StrictMode)
                                     return false;
 
                                 // Try to recover
-                                argument = new Identifier( "MISSING_ARGUMENT" );
+                                argument = new Identifier("MISSING_ARGUMENT");
                             }
 
                             --mRealStackCount;
-                            arguments.Add( new Argument(argument) );
+                            arguments.Add(new Argument(argument));
                         }
 
-                        var callOperator = new CallOperator( 
-                            function.ReturnType.ValueKind, 
+                        var callOperator = new CallOperator(
+                            function.ReturnType.ValueKind,
                             function.Identifier,
-                            arguments );
+                            arguments);
 
                         mLastFunctionCall = callOperator;
 
                         // Check if PUSHREG doesn't come next next
                         int nextCommIndex = mInstructions
-                            .GetRange( mEvaluatedInstructionIndex + 1, mInstructions.Count - ( mEvaluatedInstructionIndex + 1 ) )
-                            .FindIndex( x => x.Opcode == Opcode.COMM );
+                            .GetRange(mEvaluatedInstructionIndex + 1, mInstructions.Count - (mEvaluatedInstructionIndex + 1))
+                            .FindIndex(x => x.Opcode == Opcode.COMM);
 
-                        if ( nextCommIndex == -1 )
+                        if (nextCommIndex == -1)
                             nextCommIndex = mInstructions.Count - 1;
                         else
                             nextCommIndex += mEvaluatedInstructionIndex + 1;
 
                         // Check if PUSHREG comes up between this and the next COMM instruction
                         // ReSharper disable once SimplifyLinqExpression
-                        if ( !mInstructions.GetRange( mEvaluatedInstructionIndex, nextCommIndex - mEvaluatedInstructionIndex ).Any( x => x.Opcode == Opcode.PUSHREG ) )
+                        if (!mInstructions.GetRange(mEvaluatedInstructionIndex, nextCommIndex - mEvaluatedInstructionIndex).Any(x => x.Opcode == Opcode.PUSHREG))
                         {
                             // If PUSHREG doesn't come before another COMM then the return value is unused
-                            PushStatement( callOperator );
+                            PushStatement(callOperator);
                         }
 
                         // Otherwise let PUSHREG push the call operator
@@ -845,7 +845,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 case Opcode.END:
                     {
                         // Todo: return value
-                        PushStatement( new ReturnStatement() );
+                        PushStatement(new ReturnStatement());
                     }
                     break;
 
@@ -855,23 +855,23 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 // Call procedure
                 case Opcode.CALL:
                     {
-                        if ( instruction.Opcode == Opcode.JUMP )
+                        if (instruction.Opcode == Opcode.JUMP)
                         {
-                            LogInfo( "JUMP not implemented! Emulating as CALL" );
+                            LogInfo("JUMP not implemented! Emulating as CALL");
                         }
 
                         // Todo: arguments
                         short index = instruction.Operand.Int16Value;
-                        if ( index < 0 || index >= mScript.Procedures.Count )
+                        if (index < 0 || index >= mScript.Procedures.Count)
                         {
-                            LogError( $"CALL referenced invalid procedure index: {index}" );
+                            LogError($"CALL referenced invalid procedure index: {index}");
                             return false;
                         }
 
                         var procedure = mScript.Procedures[index];
                         int parameterCount;
                         var arguments = new List<Argument>();
-                        if ( mProcedures.TryGetValue( index, out var declaration ) )
+                        if (mProcedures.TryGetValue(index, out var declaration))
                         {
                             parameterCount = declaration.Parameters.Count;
                         }
@@ -881,37 +881,37 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
 
                             //parameterCount = mRealStackCount;
                             parameterCount = 0;
-                            var parameters = new List< Parameter >();
-                            for ( int i = 0; i < parameterCount; i++ )
-                                parameters.Add( new Parameter( ParameterModifier.None, new TypeIdentifier( ValueKind.Int ), new Identifier( $"param{i + 1}" ), null ) );
+                            var parameters = new List<Parameter>();
+                            for (int i = 0; i < parameterCount; i++)
+                                parameters.Add(new Parameter(ParameterModifier.None, new TypeIdentifier(ValueKind.Int), new Identifier($"param{i + 1}"), null));
 
                             declaration = new ProcedureDeclaration(
-                                new TypeIdentifier( ValueKind.Void ),
-                                new Identifier( ValueKind.Procedure, procedure.Name ),
+                                new TypeIdentifier(ValueKind.Void),
+                                new Identifier(ValueKind.Procedure, procedure.Name),
                                 parameters,
-                                null );
+                                null);
 
                             mProcedures[index] = declaration;
                         }
-                    
-                        for ( int i = 0; i < parameterCount; i++ )
+
+                        for (int i = 0; i < parameterCount; i++)
                         {
-                            if ( !TryPopExpression( out var expression ) )
+                            if (!TryPopExpression(out var expression))
                             {
-                                LogError( "Failed to pop expression for argument" );
+                                LogError("Failed to pop expression for argument");
                                 return false;
                             }
 
-                            arguments.Add( new Argument(expression) );
+                            arguments.Add(new Argument(expression));
                             --mRealStackCount;
                         }
 
-                        var callOperator = new CallOperator( 
-                            declaration.ReturnType.ValueKind, 
+                        var callOperator = new CallOperator(
+                            declaration.ReturnType.ValueKind,
                             declaration.Identifier,
-                            arguments );
+                            arguments);
 
-                        PushStatement( callOperator );
+                        PushStatement(callOperator);
                         mLastProcedureCall = callOperator;
                     }
                     break;
@@ -919,7 +919,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 case Opcode.RUN:
                     {
                         // Todo:
-                        LogError( "Todo: RUN" );
+                        LogError("Todo: RUN");
                         return false;
                     }
 
@@ -929,116 +929,116 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                         var label = mProcedure.Labels[index];
                         PushStatement(
                             new GotoStatement(
-                                new Identifier( ValueKind.Label, mProcedure.Labels[index].Name ) ),
-                            label );
+                                new Identifier(ValueKind.Label, mProcedure.Labels[index].Name)),
+                            label);
                     }
                     break;
                 case Opcode.ADD:
-                    if ( !TryPushBinaryExpression<AdditionOperator>() )
+                    if (!TryPushBinaryExpression<AdditionOperator>())
                     {
-                        LogError( "Failed to evaluate ADD" );
+                        LogError("Failed to evaluate ADD");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.SUB:
-                    if ( !TryPushBinaryExpression<SubtractionOperator>() )
+                    if (!TryPushBinaryExpression<SubtractionOperator>())
                     {
-                        LogError( "Failed to evaluate SUB" );
+                        LogError("Failed to evaluate SUB");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.MUL:
-                    if ( !TryPushBinaryExpression<MultiplicationOperator>() )
+                    if (!TryPushBinaryExpression<MultiplicationOperator>())
                     {
-                        LogError( "Failed to evaluate MUL" );
+                        LogError("Failed to evaluate MUL");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.DIV:
-                    if ( !TryPushBinaryExpression<DivisionOperator>() )
+                    if (!TryPushBinaryExpression<DivisionOperator>())
                     {
-                        LogError( "Failed to evaluate DIV" );
+                        LogError("Failed to evaluate DIV");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.MINUS:
-                    if ( !TryPushUnaryExpression<NegationOperator>() )
+                    if (!TryPushUnaryExpression<NegationOperator>())
                     {
-                        LogError( "Failed to evaluate MINUS" );
+                        LogError("Failed to evaluate MINUS");
                         return false;
                     }
                     break;
                 case Opcode.NOT:
-                    if ( !TryPushUnaryExpression<LogicalNotOperator>() )
+                    if (!TryPushUnaryExpression<LogicalNotOperator>())
                     {
-                        LogError( "Failed to evaluate NOT" );
+                        LogError("Failed to evaluate NOT");
                         return false;
                     }
                     break;
                 case Opcode.OR:
-                    if ( !TryPushBinaryBooleanExpression<LogicalOrOperator>() )
+                    if (!TryPushBinaryBooleanExpression<LogicalOrOperator>())
                     {
-                        LogError( "Failed to evaluate OR" );
+                        LogError("Failed to evaluate OR");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.AND:
-                    if ( !TryPushBinaryBooleanExpression<LogicalAndOperator>() )
+                    if (!TryPushBinaryBooleanExpression<LogicalAndOperator>())
                     {
-                        LogError( "Failed to evaluate AND" );
+                        LogError("Failed to evaluate AND");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.EQ:
-                    if ( !TryPushBinaryBooleanExpression<EqualityOperator>() )
+                    if (!TryPushBinaryBooleanExpression<EqualityOperator>())
                     {
-                        LogError( "Failed to evaluate EQ" );
+                        LogError("Failed to evaluate EQ");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.NEQ:
-                    if ( !TryPushBinaryBooleanExpression<NonEqualityOperator>() )
+                    if (!TryPushBinaryBooleanExpression<NonEqualityOperator>())
                     {
-                        LogError( "Failed to evaluate NEQ" );
+                        LogError("Failed to evaluate NEQ");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.S:
-                    if ( !TryPushBinaryExpression<LessThanOperator>() )
+                    if (!TryPushBinaryExpression<LessThanOperator>())
                     {
-                        LogError( "Failed to evaluate S" );
+                        LogError("Failed to evaluate S");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.L:
-                    if ( !TryPushBinaryExpression<GreaterThanOperator>() )
+                    if (!TryPushBinaryExpression<GreaterThanOperator>())
                     {
-                        LogError( "Failed to evaluate L" );
+                        LogError("Failed to evaluate L");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.SE:
-                    if ( !TryPushBinaryExpression<LessThanOrEqualOperator>() )
+                    if (!TryPushBinaryExpression<LessThanOrEqualOperator>())
                     {
-                        LogError( "Failed to evaluate SE" );
+                        LogError("Failed to evaluate SE");
                         return false;
                     }
                     --mRealStackCount;
                     break;
                 case Opcode.LE:
-                    if ( !TryPushBinaryExpression<GreaterThanOrEqualOperator>() )
+                    if (!TryPushBinaryExpression<GreaterThanOrEqualOperator>())
                     {
-                        LogError( "Failed to evaluate LE" );
+                        LogError("Failed to evaluate LE");
                         return false;
                     }
                     --mRealStackCount;
@@ -1052,24 +1052,24 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                         var label = mProcedure.Labels[index];
 
                         // Pop condition
-                        if ( !TryPopExpression( out var condition ) )
+                        if (!TryPopExpression(out var condition))
                         {
-                            LogError( "Failed to pop if statement condition expression" );
+                            LogError("Failed to pop if statement condition expression");
                             return false;
                         }
 
                         // The body and else body is structured later
-                        PushStatement( new IfStatement(
+                        PushStatement(new IfStatement(
                             condition,
                             null,
-                            null ), label );
+                            null), label);
                     }
                     --mRealStackCount;
                     break;
 
                 // Push short
                 case Opcode.PUSHIS:
-                    PushStatement( new IntLiteral( instruction.Operand.Int16Value) );
+                    PushStatement(new IntLiteral(instruction.Operand.Int16Value));
                     ++mRealStackCount;
                     break;
 
@@ -1077,39 +1077,39 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                 case Opcode.PUSHLIX:
                     {
                         short index = instruction.Operand.Int16Value;
-                        if ( !Scope.TryGetLocalIntVariable( index, out var declaration ) )
+                        if (!Scope.TryGetLocalIntVariable(index, out var declaration))
                         {
                             // Probably a variable declared in the root scope
-                            LogInfo( $"Referenced undeclared local int variable: '{index}'" );
+                            LogInfo($"Referenced undeclared local int variable: '{index}'");
                             //return false;
 
-                            if ( !TryDeclareVariable( VariableModifierKind.Local, ValueKind.Int, index, VariableIndexKind.Implicit, out declaration ) )
+                            if (!TryDeclareVariable(VariableModifierKind.Local, ValueKind.Int, index, VariableIndexKind.Implicit, out declaration))
                             {
-                                LogError( "Failed to declare local float variable for PUSHLIX" );
+                                LogError("Failed to declare local float variable for PUSHLIX");
                                 return false;
                             }
                         }
 
-                        PushStatement( declaration.Identifier );
+                        PushStatement(declaration.Identifier);
                         ++mRealStackCount;
                     }
                     break;
                 case Opcode.PUSHLFX:
                     {
                         short index = instruction.Operand.Int16Value;
-                        if ( !Scope.TryGetLocalFloatVariable( index, out var declaration ) )
+                        if (!Scope.TryGetLocalFloatVariable(index, out var declaration))
                         {
-                            LogInfo( $"Referenced undeclared local float variable: '{index}'" );
+                            LogInfo($"Referenced undeclared local float variable: '{index}'");
                             //return false;
 
-                            if ( !TryDeclareVariable( VariableModifierKind.Local, ValueKind.Float, index, VariableIndexKind.Implicit, out declaration ) )
+                            if (!TryDeclareVariable(VariableModifierKind.Local, ValueKind.Float, index, VariableIndexKind.Implicit, out declaration))
                             {
-                                LogError( "Failed to declare local int variable for PUSHLFX" );
+                                LogError("Failed to declare local int variable for PUSHLFX");
                                 return false;
                             }
                         }
 
-                        PushStatement( declaration.Identifier );
+                        PushStatement(declaration.Identifier);
                         ++mRealStackCount;
                     }
                     break;
@@ -1117,23 +1117,23 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                     {
                         short index = instruction.Operand.Int16Value;
 
-                        if ( !Scope.TryGetLocalIntVariable( index, out var declaration ) )
+                        if (!Scope.TryGetLocalIntVariable(index, out var declaration))
                         {
                             // variable hasn't been declared yet
-                            if ( !TryDeclareVariable( VariableModifierKind.Local, ValueKind.Int, index, VariableIndexKind.Implicit, out declaration ) )
+                            if (!TryDeclareVariable(VariableModifierKind.Local, ValueKind.Int, index, VariableIndexKind.Implicit, out declaration))
                             {
-                                LogError( "Failed to declare variable for POPLIX" );
+                                LogError("Failed to declare variable for POPLIX");
                                 return false;
                             }
                         }
 
-                        if ( !TryPopExpression( out var value ) )
+                        if (!TryPopExpression(out var value))
                         {
-                            LogError( "Failed to pop expression for variable assignment" );
+                            LogError("Failed to pop expression for variable assignment");
                             return false;
                         }
 
-                        PushStatement( new AssignmentOperator( declaration.Identifier, value ) );
+                        PushStatement(new AssignmentOperator(declaration.Identifier, value));
                         --mRealStackCount;
                     }
                     break;
@@ -1141,35 +1141,35 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
                     {
                         short index = instruction.Operand.Int16Value;
 
-                        if ( !Scope.TryGetLocalFloatVariable( index, out var declaration ) )
+                        if (!Scope.TryGetLocalFloatVariable(index, out var declaration))
                         {
                             // variable hasn't been declared yet
-                            if ( !TryDeclareVariable( VariableModifierKind.Local, ValueKind.Float, index, VariableIndexKind.Implicit, out declaration ) )
+                            if (!TryDeclareVariable(VariableModifierKind.Local, ValueKind.Float, index, VariableIndexKind.Implicit, out declaration))
                             {
-                                LogError( "Failed to declare variable for POPLFX" );
+                                LogError("Failed to declare variable for POPLFX");
                                 return false;
                             }
                         }
 
-                        if ( !TryPopExpression( out var value ) )
+                        if (!TryPopExpression(out var value))
                         {
-                            LogError( "Failed to pop expression for variable assignment" );
+                            LogError("Failed to pop expression for variable assignment");
                             return false;
                         }
 
-                        PushStatement( new AssignmentOperator( declaration.Identifier, value ) );
+                        PushStatement(new AssignmentOperator(declaration.Identifier, value));
                         --mRealStackCount;
                     }
                     break;
                 case Opcode.PUSHSTR:
                     {
                         var stringValue = instruction.Operand.StringValue;
-                        PushStatement( new StringLiteral( stringValue ) );
+                        PushStatement(new StringLiteral(stringValue));
                         ++mRealStackCount;
                     }
                     break;
                 default:
-                    LogError( $"Unimplemented opcode: { instruction.Opcode }" );
+                    LogError($"Unimplemented opcode: {instruction.Opcode}");
                     return false;
             }
 
@@ -1179,18 +1179,18 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
         //
         // Evaluation stack control
         //
-        private void PushStatement( Statement statement, Label referencedLabel = null )
+        private void PushStatement(Statement statement, Label referencedLabel = null)
         {
-            var visitor = new StatementVisitor( this );
-            visitor.Visit( statement );
+            var visitor = new StatementVisitor(this);
+            visitor.Visit(statement);
 
             mEvaluationStatementStack.Push(
-                new EvaluatedStatement( statement, mEvaluatedInstructionIndex, referencedLabel ) );
+                new EvaluatedStatement(statement, mEvaluatedInstructionIndex, referencedLabel));
         }
 
-        private bool TryPopStatement( out Statement statement )
+        private bool TryPopStatement(out Statement statement)
         {
-            if ( mEvaluationStatementStack.Count == 1 /* return address */ )
+            if (mEvaluationStatementStack.Count == 1 /* return address */ )
             {
                 statement = null;
                 return false;
@@ -1200,18 +1200,18 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             return true;
         }
 
-        private void PushExpression( Statement statement )
+        private void PushExpression(Statement statement)
         {
-            var visitor = new StatementVisitor( this );
-            visitor.Visit( statement );
+            var visitor = new StatementVisitor(this);
+            visitor.Visit(statement);
 
             mExpressionStack.Push(
-                new EvaluatedStatement( statement, mEvaluatedInstructionIndex, null ) );
+                new EvaluatedStatement(statement, mEvaluatedInstructionIndex, null));
         }
 
-        private bool TryPopExpression( out Expression expression )
+        private bool TryPopExpression(out Expression expression)
         {
-            if ( !TryPopStatement( out var statement ) )
+            if (!TryPopStatement(out var statement))
             {
                 expression = null;
                 return false;
@@ -1224,12 +1224,12 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
         private bool TryPushBinaryExpression<T>() where T : BinaryExpression, new()
         {
             var binaryExpression = new T();
-            if ( !TryPopExpression( out var left ) )
+            if (!TryPopExpression(out var left))
             {
                 return false;
             }
 
-            if ( !TryPopExpression( out var right ) )
+            if (!TryPopExpression(out var right))
             {
                 return false;
             }
@@ -1237,52 +1237,52 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             binaryExpression.Left = left;
             binaryExpression.Right = right;
 
-            PushStatement( binaryExpression );
+            PushStatement(binaryExpression);
             return true;
         }
 
         private bool TryPushBinaryBooleanExpression<T>() where T : BinaryExpression, new()
         {
             var binaryExpression = new T();
-            if ( !TryPopExpression( out var left ) )
+            if (!TryPopExpression(out var left))
             {
                 return false;
             }
 
-            if ( !TryPopExpression( out var right ) )
+            if (!TryPopExpression(out var right))
             {
                 return false;
             }
 
             // Check if the left expression is already returns a boolean value, and if so
             // omit the x == 0 or x == 1 expression
-            if ( left.ExpressionValueKind == ValueKind.Bool && right is IntLiteral intLiteral )
+            if (left.ExpressionValueKind == ValueKind.Bool && right is IntLiteral intLiteral)
             {
-                if ( typeof(T) == typeof( NonEqualityOperator ) )
+                if (typeof(T) == typeof(NonEqualityOperator))
                 {
                     // NEQ
-                    if ( intLiteral.Value == 0 ) //  x != false -> x
+                    if (intLiteral.Value == 0) //  x != false -> x
                     {
-                        PushStatement( left );
+                        PushStatement(left);
                         return true;
                     }
-                    else if ( intLiteral.Value == 1 ) // x != true -> !x
+                    else if (intLiteral.Value == 1) // x != true -> !x
                     {
-                        PushStatement( new LogicalNotOperator( left ) );
+                        PushStatement(new LogicalNotOperator(left));
                         return true;
                     }
                 }
                 else
                 {
                     // OR, AND, EQ
-                    if ( intLiteral.Value == 0 ) //  x == false -> !x
+                    if (intLiteral.Value == 0) //  x == false -> !x
                     {
-                        PushStatement( new LogicalNotOperator( left ) );
+                        PushStatement(new LogicalNotOperator(left));
                         return true;
                     }
-                    else if ( intLiteral.Value == 1 ) // x == true -> x
+                    else if (intLiteral.Value == 1) // x == true -> x
                     {
-                        PushStatement( left );
+                        PushStatement(left);
                         return true;
                     }
                 }
@@ -1291,7 +1291,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             binaryExpression.Left = left;
             binaryExpression.Right = right;
 
-            PushStatement( binaryExpression );
+            PushStatement(binaryExpression);
 
             return true;
         }
@@ -1299,30 +1299,30 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
         private bool TryPushUnaryExpression<T>() where T : UnaryExpression, new()
         {
             var uanryExpression = new T();
-            if ( !TryPopExpression( out var operand ) )
+            if (!TryPopExpression(out var operand))
             {
                 return false;
             }
 
             uanryExpression.Operand = operand;
 
-            PushStatement( uanryExpression );
+            PushStatement(uanryExpression);
             return true;
         }
 
         //
         // Logging
         //
-        private void LogInfo( string message )
+        private void LogInfo(string message)
         {
-            mLogger.Info( $"{message}" );
+            mLogger.Info($"{message}");
         }
 
-        private void LogError( string message )
+        private void LogError(string message)
         {
-            mLogger.Error( $"{message}" );
+            mLogger.Error($"{message}");
 
-            if ( Debugger.IsAttached )
+            if (Debugger.IsAttached)
             {
                 //Debugger.Break();
             }
@@ -1332,21 +1332,21 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
         {
             private readonly Evaluator mEvaluator;
 
-            public StatementVisitor( Evaluator evaluator )
+            public StatementVisitor(Evaluator evaluator)
             {
                 mEvaluator = evaluator;
             }
 
-            public override void Visit( Identifier identifier )
+            public override void Visit(Identifier identifier)
             {
-                if ( mEvaluator.Scope.Variables.Values.Any( x => x.Identifier.Text == identifier.Text ) )
+                if (mEvaluator.Scope.Variables.Values.Any(x => x.Identifier.Text == identifier.Text))
                 {
                     mEvaluator.mProcedureLocalVariables.Add(
-                        new EvaluatedIdentifierReference( identifier,
-                            mEvaluator.mEvaluatedInstructionIndex ) );
+                        new EvaluatedIdentifierReference(identifier,
+                            mEvaluator.mEvaluatedInstructionIndex));
                 }
 
-                base.Visit( identifier );
+                base.Visit(identifier);
             }
         }
     }

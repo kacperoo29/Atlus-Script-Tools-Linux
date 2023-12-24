@@ -15,7 +15,7 @@
         {
         }
 
-        public Parameter( ParameterModifier modifier, TypeIdentifier type, Identifier identifier, Expression defaultValue )
+        public Parameter(ParameterModifier modifier, TypeIdentifier type, Identifier identifier, Expression defaultValue)
         {
             Modifier = modifier;
             Type = type;
@@ -37,10 +37,10 @@
 
         public ArrayParameter()
         {
-            
+
         }
 
-        public ArrayParameter( ParameterModifier modifier, TypeIdentifier type, Identifier identifier, IntLiteral size ) : base(modifier, type, identifier, null)
+        public ArrayParameter(ParameterModifier modifier, TypeIdentifier type, Identifier identifier, IntLiteral size) : base(modifier, type, identifier, null)
         {
             Size = size;
         }

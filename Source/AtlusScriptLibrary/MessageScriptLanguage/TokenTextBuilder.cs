@@ -11,35 +11,35 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
             mTokens = new List<IToken>();
         }
 
-        public TokenTextBuilder AddToken( IToken token )
+        public TokenTextBuilder AddToken(IToken token)
         {
-            mTokens.Add( token );
+            mTokens.Add(token);
             return this;
         }
 
-        public TokenTextBuilder AddString( string value )
+        public TokenTextBuilder AddString(string value)
         {
-            return AddToken( new StringToken( value ) );
+            return AddToken(new StringToken(value));
         }
 
-        public TokenTextBuilder AddFunction( int functionTableIndex, int functionIndex, params ushort[] args )
+        public TokenTextBuilder AddFunction(int functionTableIndex, int functionIndex, params ushort[] args)
         {
-            return AddToken( new FunctionToken( functionTableIndex, functionIndex, args ) );
+            return AddToken(new FunctionToken(functionTableIndex, functionIndex, args));
         }
 
-        public TokenTextBuilder AddCodePoint( byte highSurrogate, byte lowSurrogate )
+        public TokenTextBuilder AddCodePoint(byte highSurrogate, byte lowSurrogate)
         {
-            return AddToken( new CodePointToken( highSurrogate, lowSurrogate ) );
+            return AddToken(new CodePointToken(highSurrogate, lowSurrogate));
         }
 
         public TokenTextBuilder AddNewLine()
         {
-            return AddToken( new NewLineToken() );
+            return AddToken(new NewLineToken());
         }
 
         public TokenText Build()
         {
-            return new TokenText( mTokens );
+            return new TokenText(mTokens);
         }
     }
 }

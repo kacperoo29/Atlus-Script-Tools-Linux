@@ -7,12 +7,12 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
     {
         public List<EnumValueDeclaration> Values { get; set; }
 
-        public EnumDeclaration() : base( DeclarationType.Enum )
+        public EnumDeclaration() : base(DeclarationType.Enum)
         {
-            Values = new List< EnumValueDeclaration >();
+            Values = new List<EnumValueDeclaration>();
         }
 
-        public EnumDeclaration( Identifier identifier ) : base( DeclarationType.Enum, identifier )
+        public EnumDeclaration(Identifier identifier) : base(DeclarationType.Enum, identifier)
         {
             Values = new List<EnumValueDeclaration>();
         }
@@ -22,19 +22,19 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
             return $"enum {Identifier} {{ ... }}";
         }
 
-        public static EnumDeclaration FromLibraryEnum( FlowScriptModuleEnum libraryEnum )
+        public static EnumDeclaration FromLibraryEnum(FlowScriptModuleEnum libraryEnum)
         {
             var enumDeclaration = new EnumDeclaration(
-                new Identifier( ValueKind.Type, libraryEnum.Name ) );
+                new Identifier(ValueKind.Type, libraryEnum.Name));
 
-            foreach ( var libraryEnumMember in libraryEnum.Members )
+            foreach (var libraryEnumMember in libraryEnum.Members)
             {
                 var valueDeclaration = new EnumValueDeclaration(
-                    new Identifier( ValueKind.Unresolved, libraryEnumMember.Name ),
-                    Expression.FromText( libraryEnumMember.Value )
+                    new Identifier(ValueKind.Unresolved, libraryEnumMember.Name),
+                    Expression.FromText(libraryEnumMember.Value)
                 );
 
-                enumDeclaration.Values.Add( valueDeclaration );
+                enumDeclaration.Values.Add(valueDeclaration);
             }
 
             return enumDeclaration;

@@ -7,7 +7,7 @@
 
         }
 
-        public LogicalNotOperator( Expression operand ) : base( ValueKind.Bool, operand )
+        public LogicalNotOperator(Expression operand) : base(ValueKind.Bool, operand)
         {
 
         }

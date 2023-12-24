@@ -7,13 +7,13 @@ namespace AtlusScriptLibrary.Common.Logging
     {
         public bool UseColors { get; set; }
 
-        public ConsoleLogListener( bool useColors, LogLevel filter ) : base( filter )
+        public ConsoleLogListener(bool useColors, LogLevel filter) : base(filter)
         {
             UseColors = useColors;
             TrySetConsoleEncoding();
         }
 
-        public ConsoleLogListener( string channelName, bool useColors ) : base( channelName )
+        public ConsoleLogListener(string channelName, bool useColors) : base(channelName)
         {
             UseColors = useColors;
             TrySetConsoleEncoding();
@@ -30,27 +30,27 @@ namespace AtlusScriptLibrary.Common.Logging
             }
         }
 
-        protected override void OnLogCore( object sender, LogEventArgs e )
+        protected override void OnLogCore(object sender, LogEventArgs e)
         {
             ConsoleColor prevColor = 0;
 
-            if ( UseColors )
+            if (UseColors)
             {
                 prevColor = Console.ForegroundColor;
-                Console.ForegroundColor = GetConsoleColorForSeverityLevel( e.Level );
+                Console.ForegroundColor = GetConsoleColorForSeverityLevel(e.Level);
             }
 
             Console.WriteLine($"{DateTime.Now} {e.ChannelName} {e.Level}: {e.Message}");
 
-            if ( UseColors )
+            if (UseColors)
             {
                 Console.ForegroundColor = prevColor;
             }
         }
 
-        private ConsoleColor GetConsoleColorForSeverityLevel( LogLevel level )
+        private ConsoleColor GetConsoleColorForSeverityLevel(LogLevel level)
         {
-            switch ( level )
+            switch (level)
             {
                 case LogLevel.Debug:
                     return ConsoleColor.White;

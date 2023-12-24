@@ -10,7 +10,7 @@
         {
         }
 
-        public WhileStatement( Expression condition, CompoundStatement body )
+        public WhileStatement(Expression condition, CompoundStatement body)
         {
             Condition = condition;
             Body = body;

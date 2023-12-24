@@ -23,7 +23,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler
 
         public Dictionary<Expression, LabelInfo> SwitchLabels { get; set; }
 
-        public ScopeContext( ScopeContext parent )
+        public ScopeContext(ScopeContext parent)
         {
             Parent = parent;
             Functions = new Dictionary<string, FunctionInfo>();
@@ -32,141 +32,141 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler
             Enums = new Dictionary<string, Enum>();
         }
 
-        public bool TryGetBreakLabel( out LabelInfo label )
+        public bool TryGetBreakLabel(out LabelInfo label)
         {
-            if ( BreakLabel != null )
+            if (BreakLabel != null)
             {
                 label = BreakLabel;
                 return true;
             }
 
-            if ( Parent != null )
-                return Parent.TryGetBreakLabel( out label );
+            if (Parent != null)
+                return Parent.TryGetBreakLabel(out label);
 
             label = null;
             return false;
         }
 
-        public bool TryGetContinueLabel( out LabelInfo label )
+        public bool TryGetContinueLabel(out LabelInfo label)
         {
-            if ( ContinueLabel != null )
+            if (ContinueLabel != null)
             {
                 label = ContinueLabel;
                 return true;
             }
 
-            if ( Parent != null )
-                return Parent.TryGetContinueLabel( out label );
+            if (Parent != null)
+                return Parent.TryGetContinueLabel(out label);
 
             label = null;
             return false;
         }
 
-        public bool TryGetFunction( string name, out FunctionInfo function )
+        public bool TryGetFunction(string name, out FunctionInfo function)
         {
-            if ( !Functions.TryGetValue( name, out function ) )
+            if (!Functions.TryGetValue(name, out function))
             {
-                if ( Parent == null )
+                if (Parent == null)
                     return false;
 
-                if ( !Parent.TryGetFunction( name, out function ) )
+                if (!Parent.TryGetFunction(name, out function))
                     return false;
             }
 
             return true;
         }
 
-        public bool TryGetProcedure( string name, out ProcedureInfo procedure )
+        public bool TryGetProcedure(string name, out ProcedureInfo procedure)
         {
-            if ( !Procedures.TryGetValue( name, out procedure ) )
+            if (!Procedures.TryGetValue(name, out procedure))
             {
-                if ( Parent == null )
+                if (Parent == null)
                     return false;
 
-                if ( !Parent.TryGetProcedure( name, out procedure ) )
+                if (!Parent.TryGetProcedure(name, out procedure))
                     return false;
             }
 
             return true;
         }
 
-        public bool TryGetVariable( string name, out VariableInfo variable )
+        public bool TryGetVariable(string name, out VariableInfo variable)
         {
-            if ( !Variables.TryGetValue( name, out variable ) )
+            if (!Variables.TryGetValue(name, out variable))
             {
-                if ( Parent == null )
+                if (Parent == null)
                     return false;
 
-                if ( !Parent.TryGetVariable( name, out variable ) )
+                if (!Parent.TryGetVariable(name, out variable))
                     return false;
             }
 
             return true;
         }
 
-        public bool TryGetEnum( string name, out Enum enumDeclaration )
+        public bool TryGetEnum(string name, out Enum enumDeclaration)
         {
-            if ( !Enums.TryGetValue( name, out enumDeclaration ) )
+            if (!Enums.TryGetValue(name, out enumDeclaration))
             {
-                if ( Parent == null )
+                if (Parent == null)
                     return false;
 
-                if ( !Parent.TryGetEnum( name, out enumDeclaration ) )
+                if (!Parent.TryGetEnum(name, out enumDeclaration))
                     return false;
             }
 
             return true;
         }
 
-        public bool TryGetLabel( Expression expression, out LabelInfo label )
+        public bool TryGetLabel(Expression expression, out LabelInfo label)
         {
-            if ( SwitchLabels == null || ( label = SwitchLabels.SingleOrDefault( x => x.Key.GetHashCode() == expression.GetHashCode() ).Value ) == null )
+            if (SwitchLabels == null || (label = SwitchLabels.SingleOrDefault(x => x.Key.GetHashCode() == expression.GetHashCode()).Value) == null)
             {
-                if ( Parent == null )
+                if (Parent == null)
                 {
                     label = null;
                     return false;
                 }
 
-                if ( !Parent.TryGetLabel( expression, out label ) )
+                if (!Parent.TryGetLabel(expression, out label))
                     return false;
             }
 
             return true;
         }
 
-        public bool TryDeclareFunction( FunctionDeclaration declaration )
+        public bool TryDeclareFunction(FunctionDeclaration declaration)
         {
-            if ( TryGetFunction( declaration.Identifier.Text, out _ ) )
+            if (TryGetFunction(declaration.Identifier.Text, out _))
                 return false;
 
             var function = new FunctionInfo();
             function.Declaration = declaration;
-            function.Index = ( short )declaration.Index.Value;
+            function.Index = (short)declaration.Index.Value;
 
             Functions[declaration.Identifier.Text] = function;
 
             return true;
         }
 
-        public bool TryDeclareProcedure( ProcedureDeclaration declaration, out ProcedureInfo procedure )
+        public bool TryDeclareProcedure(ProcedureDeclaration declaration, out ProcedureInfo procedure)
         {
-            if ( TryGetProcedure( declaration.Identifier.Text, out procedure ) )
+            if (TryGetProcedure(declaration.Identifier.Text, out procedure))
             {
                 return false;
             }
 
             var p = new ProcedureInfo();
             p.Declaration = declaration;
-            p.Index = declaration.Index == null ? ( short ) Procedures.Count : ( short ) declaration.Index.Value;
-            Debug.Assert( Procedures.All( x => x.Value.Index != p.Index ), "Same procedure index used by multiple procedures" );
-            Procedures[ declaration.Identifier.Text ] = procedure = p;
+            p.Index = declaration.Index == null ? (short)Procedures.Count : (short)declaration.Index.Value;
+            Debug.Assert(Procedures.All(x => x.Value.Index != p.Index), "Same procedure index used by multiple procedures");
+            Procedures[declaration.Identifier.Text] = procedure = p;
             return true;
         }
 
-        public bool TryDeclareProcedure( ProcedureDeclaration declaration, Procedure compiled, out ProcedureInfo procedure )
+        public bool TryDeclareProcedure(ProcedureDeclaration declaration, Procedure compiled, out ProcedureInfo procedure)
         {
-            if ( !TryDeclareProcedure( declaration, out procedure ) )
+            if (!TryDeclareProcedure(declaration, out procedure))
                 return false;
 
             procedure.Compiled = compiled;
@@ -174,14 +174,14 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler
             return true;
         }
 
-        public bool TryDeclareVariable( VariableDeclaration declaration )
+        public bool TryDeclareVariable(VariableDeclaration declaration)
         {
-            return TryDeclareVariable( declaration, -1 );
+            return TryDeclareVariable(declaration, -1);
         }
 
-        public bool TryDeclareVariable( VariableDeclaration declaration, short index, int size = 1 )
+        public bool TryDeclareVariable(VariableDeclaration declaration, short index, int size = 1)
         {
-            if ( TryGetVariable( declaration.Identifier.Text, out _ ) )
+            if (TryGetVariable(declaration.Identifier.Text, out _))
                 return false;
 
             var variable = new VariableInfo();
@@ -194,36 +194,36 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler
             return true;
         }
 
-        public bool TryDeclareEnum( EnumDeclaration declaration )
+        public bool TryDeclareEnum(EnumDeclaration declaration)
         {
-            if ( TryGetEnum( declaration.Identifier.Text, out _ ) )
+            if (TryGetEnum(declaration.Identifier.Text, out _))
                 return false;
 
             var enumType = new Enum
             {
                 Declaration = declaration,
-                Members = declaration.Values.ToDictionary( x => x.Identifier.Text, y => y.Value )
+                Members = declaration.Values.ToDictionary(x => x.Identifier.Text, y => y.Value)
             };
 
             int nextMemberValue = 0;
             bool anyImplicitValues = false;
 
-            for ( int i = 0; i < enumType.Members.Count; i++ )
+            for (int i = 0; i < enumType.Members.Count; i++)
             {
-                var key = enumType.Members.Keys.ElementAt( i );
+                var key = enumType.Members.Keys.ElementAt(i);
                 var value = enumType.Members[key];
 
-                if ( value == null )
+                if (value == null)
                 {
-                    enumType.Members[key] = new IntLiteral( nextMemberValue++ );
+                    enumType.Members[key] = new IntLiteral(nextMemberValue++);
                     anyImplicitValues = true;
                 }
                 else
                 {
-                    if ( !TryGetNextMemberValue( enumType.Members, value, out nextMemberValue ) )
+                    if (!TryGetNextMemberValue(enumType.Members, value, out nextMemberValue))
                     {
                         // Only error if there are any implicit values
-                        if ( anyImplicitValues )
+                        if (anyImplicitValues)
                             return false;
                     }
                 }
@@ -234,18 +234,18 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler
             return true;
         }
 
-        private bool TryGetNextMemberValue( Dictionary<string, Expression> members, Expression enumValue, out int nextMemberValue )
+        private bool TryGetNextMemberValue(Dictionary<string, Expression> members, Expression enumValue, out int nextMemberValue)
         {
-            if ( enumValue is IntLiteral intLiteral )
+            if (enumValue is IntLiteral intLiteral)
             {
                 nextMemberValue = intLiteral.Value + 1;
                 return true;
             }
-            if ( enumValue is Identifier identifier )
+            if (enumValue is Identifier identifier)
             {
-                if ( members.TryGetValue( identifier.Text, out var value ) )
+                if (members.TryGetValue(identifier.Text, out var value))
                 {
-                    if ( !TryGetNextMemberValue( members, value, out nextMemberValue ) )
+                    if (!TryGetNextMemberValue(members, value, out nextMemberValue))
                         return false;
                 }
             }
@@ -254,20 +254,20 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler
             return false;
         }
 
-        public VariableInfo GenerateVariable( ValueKind kind, short index )
+        public VariableInfo GenerateVariable(ValueKind kind, short index)
         {
             var declaration = new VariableDeclaration(
-                new VariableModifier( VariableModifierKind.Local ),
-                new TypeIdentifier( kind ),
-                new Identifier( kind, $"<>__CompilerGenerated{kind}Variable{index}" ),
-                null );
+                new VariableModifier(VariableModifierKind.Local),
+                new TypeIdentifier(kind),
+                new Identifier(kind, $"<>__CompilerGenerated{kind}Variable{index}"),
+                null);
 
             bool result;
-            result = TryDeclareVariable( declaration, index );
-            Debug.Assert( result );
+            result = TryDeclareVariable(declaration, index);
+            Debug.Assert(result);
 
-            result = TryGetVariable( declaration.Identifier.Text, out var variable );
-            Debug.Assert( result );
+            result = TryGetVariable(declaration.Identifier.Text, out var variable);
+            Debug.Assert(result);
 
             return variable;
         }

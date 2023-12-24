@@ -4,12 +4,12 @@
     {
         public int Precedence => 15;
 
-        protected AssignmentOperatorBase() : base( ValueKind.Unresolved )
+        protected AssignmentOperatorBase() : base(ValueKind.Unresolved)
         {
         }
 
-        protected AssignmentOperatorBase( Expression left, Expression right )
-            : base( ValueKind.Unresolved, left, right )
+        protected AssignmentOperatorBase(Expression left, Expression right)
+            : base(ValueKind.Unresolved, left, right)
         {
 
         }

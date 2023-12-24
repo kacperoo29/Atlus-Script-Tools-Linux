@@ -70,9 +70,9 @@
         /// </summary>
         /// <param name="valueKind"></param>
         /// <returns></returns>
-        public static ValueKind GetBaseKind( this ValueKind valueKind )
+        public static ValueKind GetBaseKind(this ValueKind valueKind)
         {
-            switch ( valueKind )
+            switch (valueKind)
             {
                 case ValueKind.Bool:
                 case ValueKind.Int:

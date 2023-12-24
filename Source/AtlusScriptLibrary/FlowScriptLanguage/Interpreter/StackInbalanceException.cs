@@ -10,15 +10,15 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Interpreter
         {
         }
 
-        public StackInbalanceException( string message ) : base( message )
+        public StackInbalanceException(string message) : base(message)
         {
         }
 
-        public StackInbalanceException( string message, Exception innerException ) : base( message, innerException )
+        public StackInbalanceException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
-        protected StackInbalanceException( SerializationInfo info, StreamingContext context ) : base( info, context )
+        protected StackInbalanceException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

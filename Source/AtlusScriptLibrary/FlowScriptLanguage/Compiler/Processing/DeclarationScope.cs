@@ -9,20 +9,20 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler.Processing
 
         public Dictionary<string, Declaration> Declarations { get; }
 
-        public DeclarationScope( DeclarationScope parent )
+        public DeclarationScope(DeclarationScope parent)
         {
             Parent = parent;
             Declarations = new Dictionary<string, Declaration>();
         }
 
-        public bool IsDeclared( Identifier identifier )
+        public bool IsDeclared(Identifier identifier)
         {
-            return TryGetDeclaration( identifier, out _ );
+            return TryGetDeclaration(identifier, out _);
         }
 
-        public bool TryRegisterDeclaration( Declaration declaration )
+        public bool TryRegisterDeclaration(Declaration declaration)
         {
-            if ( IsDeclared( declaration.Identifier ) )
+            if (IsDeclared(declaration.Identifier))
                 return false;
 
             Declarations[declaration.Identifier.Text] = declaration;
@@ -30,13 +30,13 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler.Processing
             return true;
         }
 
-        public bool TryGetDeclaration( Identifier identifier, out Declaration declaration )
+        public bool TryGetDeclaration(Identifier identifier, out Declaration declaration)
         {
-            if ( !Declarations.TryGetValue( identifier.Text, out declaration ) )
+            if (!Declarations.TryGetValue(identifier.Text, out declaration))
             {
-                if ( Parent != null )
+                if (Parent != null)
                 {
-                    return Parent.TryGetDeclaration( identifier, out declaration );
+                    return Parent.TryGetDeclaration(identifier, out declaration);
                 }
                 return false;
             }

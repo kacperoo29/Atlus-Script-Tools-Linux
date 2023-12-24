@@ -4,12 +4,12 @@
     {
         public int Precedence => 14;
 
-        public LogicalOrOperator() : base( ValueKind.Bool )
+        public LogicalOrOperator() : base(ValueKind.Bool)
         {
         }
 
-        public LogicalOrOperator( Expression left, Expression right )
-            : base( ValueKind.Bool, left, right )
+        public LogicalOrOperator(Expression left, Expression right)
+            : base(ValueKind.Bool, left, right)
         {
 
         }

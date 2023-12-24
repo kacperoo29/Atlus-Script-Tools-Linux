@@ -20,7 +20,7 @@
         /// </summary>
         /// <param name="high">The high surrogate byte.</param>
         /// <param name="low">The low surrogate byte.</param>
-        public CodePointToken( byte high, byte low )
+        public CodePointToken(byte high, byte low)
         {
             HighSurrogate = high;
             LowSurrogate = low;
