@@ -26,6 +26,10 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.Decompiler
             {
                 headerWriter = new FileTextWriter(fileTextWriter.Path + ".h");
             }
+            else if (headerWriter == null && writer is StringWriter)
+            {
+                headerWriter = new StringWriter();
+            }
 
             mHeaderWriter = headerWriter;
         }
