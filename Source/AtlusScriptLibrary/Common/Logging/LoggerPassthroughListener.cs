@@ -4,14 +4,14 @@
     {
         private Logger mLogger;
 
-        public LoggerPassthroughListener( Logger logger )
+        public LoggerPassthroughListener(Logger logger)
         {
             mLogger = logger;
         }
 
-        protected override void OnLogCore( object sender, LogEventArgs e )
+        protected override void OnLogCore(object sender, LogEventArgs e)
         {
-            mLogger.Log( e.Level, e.Message );
+            mLogger.Log(e.Level, e.Message);
         }
     }
 }

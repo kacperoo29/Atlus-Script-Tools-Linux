@@ -9,7 +9,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.Decompiler
 {
     public sealed class MessageScriptDecompiler : IDisposable
     {
-        private static Regex sIdentifierRegex = new Regex( "^[a-zA-Z_][a-zA-Z0-9_]*$" );
+        private static Regex sIdentifierRegex = new Regex("^[a-zA-Z_][a-zA-Z0-9_]*$");
 
         private readonly TextWriter mWriter;
         private readonly TextWriter mHeaderWriter;
@@ -18,65 +18,69 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.Decompiler
 
         public bool OmitUnusedFunctions { get; set; } = true;
 
-        public MessageScriptDecompiler( TextWriter writer, TextWriter headerWriter = null )
+        public MessageScriptDecompiler(TextWriter writer, TextWriter headerWriter = null)
         {
             mWriter = writer;
 
-            if ( headerWriter == null && writer is FileTextWriter fileTextWriter )
+            if (headerWriter == null && writer is FileTextWriter fileTextWriter)
             {
-                headerWriter = new FileTextWriter( fileTextWriter.Path + ".h" );
+                headerWriter = new FileTextWriter(fileTextWriter.Path + ".h");
+            }
+            else if (headerWriter == null && writer is StringWriter)
+            {
+                headerWriter = new StringWriter();
             }
 
             mHeaderWriter = headerWriter;
         }
 
-        public void Decompile( MessageScript script )
+        public void Decompile(MessageScript script)
         {
-            WriteHeaderComment( "Decompiled by Atlus Script Tools (2017-2021) © TGE" );
+            WriteHeaderComment("Decompiled by Atlus Script Tools (2017-2021) © TGE");
 
-            for ( var i = 0; i < script.Dialogs.Count; i++ )
+            for (var i = 0; i < script.Dialogs.Count; i++)
             {
-                var message = script.Dialogs[ i ];
-                WriteHeaderLine( $"const int {FormatIdentifier( message.Name ).PadRight(32)} = {i};" );
-                Decompile( message );
+                var message = script.Dialogs[i];
+                WriteHeaderLine($"const int {FormatIdentifier(message.Name).PadRight(32)} = {i};");
+                Decompile(message);
                 mWriter.WriteLine();
             }
         }
 
-        public void Decompile( IDialog message )
+        public void Decompile(IDialog message)
         {
-            switch ( message.Kind )
+            switch (message.Kind)
             {
                 case DialogKind.Message:
-                    Decompile( ( MessageDialog )message );
+                    Decompile((MessageDialog)message);
                     break;
                 case DialogKind.Selection:
-                    Decompile( ( SelectionDialog )message );
+                    Decompile((SelectionDialog)message);
                     break;
 
                 default:
-                    throw new NotImplementedException( message.Kind.ToString() );
+                    throw new NotImplementedException(message.Kind.ToString());
             }
         }
 
-        public void Decompile( MessageDialog message )
+        public void Decompile(MessageDialog message)
         {
-            if ( message.Speaker != null )
+            if (message.Speaker != null)
             {
-                switch ( message.Speaker.Kind )
+                switch (message.Speaker.Kind)
                 {
                     case SpeakerKind.Named:
                         {
-                            WriteOpenTag( "msg" );
-                            WriteTagArgument( FormatIdentifier( message.Name ) );
+                            WriteOpenTag("msg");
+                            WriteTagArgument(FormatIdentifier(message.Name));
                             {
-                                mWriter.Write( " " );
+                                mWriter.Write(" ");
 
-                                var speaker = ( NamedSpeaker )message.Speaker;
-                                if ( speaker.Name != null )
+                                var speaker = (NamedSpeaker)message.Speaker;
+                                if (speaker.Name != null)
                                 {
                                     WriteOpenTag();
-                                    Decompile( speaker.Name, false );
+                                    Decompile(speaker.Name, false);
                                     WriteCloseTag();
                                 }
                             }
@@ -86,12 +90,12 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.Decompiler
 
                     case SpeakerKind.Variable:
                         {
-                            WriteOpenTag( "msg" );
-                            WriteTagArgument( FormatIdentifier( message.Name ) );
+                            WriteOpenTag("msg");
+                            WriteTagArgument(FormatIdentifier(message.Name));
                             {
-                                mWriter.Write( " " );
+                                mWriter.Write(" ");
                                 WriteOpenTag();
-                                mWriter.Write( ( ( VariableSpeaker )message.Speaker ).Index.ToString() );
+                                mWriter.Write(((VariableSpeaker)message.Speaker).Index.ToString());
                                 WriteCloseTag();
                             }
                             WriteCloseTag();
@@ -101,92 +105,92 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.Decompiler
             }
             else
             {
-                WriteTag( "msg", FormatIdentifier( message.Name ) );
+                WriteTag("msg", FormatIdentifier(message.Name));
             }
 
             mWriter.WriteLine();
 
-            foreach ( var line in message.Pages )
+            foreach (var line in message.Pages)
             {
-                Decompile( line );
+                Decompile(line);
                 mWriter.WriteLine();
             }
         }
 
-        public void Decompile( SelectionDialog message )
+        public void Decompile(SelectionDialog message)
         {
             var pattern = "";
-            if ( message.Pattern == SelectionDialogPattern.Top )
+            if (message.Pattern == SelectionDialogPattern.Top)
                 pattern = "top";
-            else if ( message.Pattern == SelectionDialogPattern.Bottom )
+            else if (message.Pattern == SelectionDialogPattern.Bottom)
                 pattern = "bottom";
             else
-                pattern = ( (int)message.Pattern ).ToString();
+                pattern = ((int)message.Pattern).ToString();
 
-            WriteTag( "sel", FormatIdentifier( message.Name ), pattern );
+            WriteTag("sel", FormatIdentifier(message.Name), pattern);
             mWriter.WriteLine();
 
-            foreach ( var line in message.Options )
+            foreach (var line in message.Options)
             {
-                Decompile( line );
+                Decompile(line);
                 mWriter.WriteLine();
             }
         }
 
-        public void Decompile( TokenText line, bool emitLineEndTag = true )
+        public void Decompile(TokenText line, bool emitLineEndTag = true)
         {
-            foreach ( var token in line.Tokens )
+            foreach (var token in line.Tokens)
             {
-                Decompile( token );
+                Decompile(token);
             }
 
-            if ( emitLineEndTag )
-                WriteTag( "e" );
+            if (emitLineEndTag)
+                WriteTag("e");
         }
 
-        public void Decompile( IToken token )
+        public void Decompile(IToken token)
         {
-            switch ( token.Kind )
+            switch (token.Kind)
             {
                 case TokenKind.String:
-                    Decompile( ( StringToken )token );
+                    Decompile((StringToken)token);
                     break;
                 case TokenKind.Function:
-                    Decompile( ( FunctionToken )token );
+                    Decompile((FunctionToken)token);
                     break;
                 case TokenKind.CodePoint:
-                    Decompile( ( CodePointToken )token );
+                    Decompile((CodePointToken)token);
                     break;
                 case TokenKind.NewLine:
-                    Decompile( ( NewLineToken )token );
+                    Decompile((NewLineToken)token);
                     break;
 
                 default:
-                    throw new NotImplementedException( token.Kind.ToString() );
+                    throw new NotImplementedException(token.Kind.ToString());
             }
         }
 
-        public void Decompile( FunctionToken token )
+        public void Decompile(FunctionToken token)
         {
-            if ( Library != null )
+            if (Library != null)
             {
-                var library = Library.MessageScriptLibraries.FirstOrDefault( x => x.Index == token.FunctionTableIndex );
-                if ( library != null )
+                var library = Library.MessageScriptLibraries.FirstOrDefault(x => x.Index == token.FunctionTableIndex);
+                if (library != null)
                 {
-                    var function = library.Functions.FirstOrDefault( x => x.Index == token.FunctionIndex );
-                    if ( function != null )
+                    var function = library.Functions.FirstOrDefault(x => x.Index == token.FunctionIndex);
+                    if (function != null)
                     {
-                        if ( function.Semantic == MessageScriptLibraryFunctionSemantic.Unused && OmitUnusedFunctions )
+                        if (function.Semantic == MessageScriptLibraryFunctionSemantic.Unused && OmitUnusedFunctions)
                             return;
 
-                        if ( !string.IsNullOrWhiteSpace( function.Name ) )
+                        if (!string.IsNullOrWhiteSpace(function.Name))
                         {
-                            WriteOpenTag( FormatIdentifier( function.Name ) );
+                            WriteOpenTag(FormatIdentifier(function.Name));
 
-                            for ( var i = 0; i < function.Parameters.Count; i++ )
+                            for (var i = 0; i < function.Parameters.Count; i++)
                             {
                                 var argument = function.Parameters[i];
-                                WriteTagArgument( token.Arguments[i].ToString() );
+                                WriteTagArgument(token.Arguments[i].ToString());
                             }
 
                             WriteCloseTag();
@@ -196,38 +200,38 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.Decompiler
                 }
             }
 
-            if ( token.Arguments.Count == 0 )
+            if (token.Arguments.Count == 0)
             {
-                WriteTag( "f", token.FunctionTableIndex.ToString(), token.FunctionIndex.ToString() );
+                WriteTag("f", token.FunctionTableIndex.ToString(), token.FunctionIndex.ToString());
             }
             else
             {
-                WriteOpenTag( "f" );
-                WriteTagArgument( token.FunctionTableIndex.ToString() );
-                WriteTagArgument( token.FunctionIndex.ToString() );
+                WriteOpenTag("f");
+                WriteTagArgument(token.FunctionTableIndex.ToString());
+                WriteTagArgument(token.FunctionIndex.ToString());
 
-                foreach ( var tokenArgument in token.Arguments )
+                foreach (var tokenArgument in token.Arguments)
                 {
-                    WriteTagArgument( tokenArgument.ToString() );
+                    WriteTagArgument(tokenArgument.ToString());
                 }
 
                 WriteCloseTag();
             }
         }
 
-        public void Decompile( StringToken token )
+        public void Decompile(StringToken token)
         {
-            mWriter.Write( token.Value );
+            mWriter.Write(token.Value);
         }
 
-        public void Decompile( CodePointToken token )
+        public void Decompile(CodePointToken token)
         {
-            WriteTag( $"x 0x{token.HighSurrogate:X2} 0x{token.LowSurrogate:X2}" );
+            WriteTag($"x 0x{token.HighSurrogate:X2} 0x{token.LowSurrogate:X2}");
         }
 
-        public void Decompile( NewLineToken token )
+        public void Decompile(NewLineToken token)
         {
-            WriteTag( "n" );
+            WriteTag("n");
         }
 
         public void Dispose()
@@ -238,61 +242,61 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.Decompiler
 
         private void WriteOpenTag()
         {
-            mWriter.Write( "[" );
+            mWriter.Write("[");
         }
 
-        private void WriteOpenTag( string tag )
+        private void WriteOpenTag(string tag)
         {
-            mWriter.Write( $"[{tag}" );
+            mWriter.Write($"[{tag}");
         }
 
-        private void WriteTagArgument( string argument )
+        private void WriteTagArgument(string argument)
         {
-            mWriter.Write( " " );
-            mWriter.Write( argument );
+            mWriter.Write(" ");
+            mWriter.Write(argument);
         }
 
         private void WriteCloseTag()
         {
-            mWriter.Write( "]" );
+            mWriter.Write("]");
         }
 
-        private void WriteTag( string tag, params string[] arguments )
+        private void WriteTag(string tag, params string[] arguments)
         {
-            WriteOpenTag( tag );
+            WriteOpenTag(tag);
 
-            if ( arguments.Length != 0 )
+            if (arguments.Length != 0)
             {
-                foreach ( var argument in arguments )
+                foreach (var argument in arguments)
                 {
-                    WriteTagArgument( argument );
+                    WriteTagArgument(argument);
                 }
             }
 
             WriteCloseTag();
         }
 
-        private string FormatIdentifier( string text )
+        private string FormatIdentifier(string text)
         {
-            if ( !sIdentifierRegex.IsMatch( text ) )
+            if (!sIdentifierRegex.IsMatch(text))
                 return "``" + text + "``";
             else
                 return text;
         }
 
-        private void WriteComment( string text )
+        private void WriteComment(string text)
         {
             // Disabled temporarily
         }
 
-        private void WriteHeaderComment( string text )
+        private void WriteHeaderComment(string text)
         {
-            mHeaderWriter.WriteLine( $"// {text}" );
+            mHeaderWriter.WriteLine($"// {text}");
         }
 
-        private void WriteHeaderLine( string text )
+        private void WriteHeaderLine(string text)
         {
-            mHeaderWriter.WriteLine( text );
+            mHeaderWriter.WriteLine(text);
         }
     }
 }

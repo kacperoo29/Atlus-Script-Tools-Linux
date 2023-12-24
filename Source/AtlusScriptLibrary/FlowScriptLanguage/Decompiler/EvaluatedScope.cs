@@ -17,7 +17,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
 
         public Dictionary<string, VariableDeclaration> Variables { get; set; }
 
-        public EvaluatedScope( EvaluatedScope parent )
+        public EvaluatedScope(EvaluatedScope parent)
         {
             Parent = parent;
             StaticIntVariables = new Dictionary<int, VariableDeclaration>();
@@ -27,57 +27,57 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             Variables = new Dictionary<string, VariableDeclaration>();
         }
 
-        public bool TryGetGlobalIntVariable( int index, out VariableDeclaration declaration )
+        public bool TryGetGlobalIntVariable(int index, out VariableDeclaration declaration)
         {
-            if ( !StaticIntVariables.TryGetValue( index, out declaration ) )
+            if (!StaticIntVariables.TryGetValue(index, out declaration))
             {
-                if ( Parent != null )
-                    return Parent.TryGetGlobalIntVariable( index, out declaration );
+                if (Parent != null)
+                    return Parent.TryGetGlobalIntVariable(index, out declaration);
                 return false;
             }
 
             return true;
         }
 
-        public bool TryGetGlobalFloatVariable( int index, out VariableDeclaration declaration )
+        public bool TryGetGlobalFloatVariable(int index, out VariableDeclaration declaration)
         {
-            if ( !StaticFloatVariables.TryGetValue( index, out declaration ) )
+            if (!StaticFloatVariables.TryGetValue(index, out declaration))
             {
-                if ( Parent != null )
-                    return Parent.TryGetGlobalFloatVariable( index, out declaration );
+                if (Parent != null)
+                    return Parent.TryGetGlobalFloatVariable(index, out declaration);
                 return false;
             }
 
             return true;
         }
 
-        public bool TryGetLocalIntVariable( int index, out VariableDeclaration declaration )
+        public bool TryGetLocalIntVariable(int index, out VariableDeclaration declaration)
         {
-            if ( !LocalIntVariables.TryGetValue( index, out declaration ) )
+            if (!LocalIntVariables.TryGetValue(index, out declaration))
             {
-                if ( Parent != null )
-                    return Parent.TryGetLocalIntVariable( index, out declaration );
+                if (Parent != null)
+                    return Parent.TryGetLocalIntVariable(index, out declaration);
                 return false;
             }
 
             return true;
         }
 
-        public bool TryGetLocalFloatVariable( int index, out VariableDeclaration declaration )
+        public bool TryGetLocalFloatVariable(int index, out VariableDeclaration declaration)
         {
-            if ( !LocalFloatVariables.TryGetValue( index, out declaration ) )
+            if (!LocalFloatVariables.TryGetValue(index, out declaration))
             {
-                if ( Parent != null )
-                    return Parent.TryGetLocalFloatVariable( index, out declaration );
+                if (Parent != null)
+                    return Parent.TryGetLocalFloatVariable(index, out declaration);
                 return false;
             }
 
             return true;
         }
 
-        public bool TryDeclareGlobalIntVariable( int index, VariableDeclaration declaration )
+        public bool TryDeclareGlobalIntVariable(int index, VariableDeclaration declaration)
         {
-            if ( TryGetGlobalIntVariable( index, out var _ ) )
+            if (TryGetGlobalIntVariable(index, out var _))
                 return false;
 
             StaticIntVariables[index] = declaration;
@@ -85,9 +85,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             return true;
         }
 
-        public bool TryDeclareGlobalFloatVariable( int index, VariableDeclaration declaration )
+        public bool TryDeclareGlobalFloatVariable(int index, VariableDeclaration declaration)
         {
-            if ( TryGetGlobalFloatVariable( index, out var _ ) )
+            if (TryGetGlobalFloatVariable(index, out var _))
                 return false;
 
             StaticFloatVariables[index] = declaration;
@@ -95,9 +95,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             return true;
         }
 
-        public bool TryDeclareLocalIntVariable( int index, VariableDeclaration declaration )
+        public bool TryDeclareLocalIntVariable(int index, VariableDeclaration declaration)
         {
-            if ( TryGetLocalIntVariable( index, out var _ ) )
+            if (TryGetLocalIntVariable(index, out var _))
                 return false;
 
             LocalIntVariables[index] = declaration;
@@ -105,9 +105,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
             return true;
         }
 
-        public bool TryDeclareLocalFloatVariable( int index, VariableDeclaration declaration )
+        public bool TryDeclareLocalFloatVariable(int index, VariableDeclaration declaration)
         {
-            if ( TryGetLocalFloatVariable( index, out var _ ) )
+            if (TryGetLocalFloatVariable(index, out var _))
                 return false;
 
             LocalFloatVariables[index] = declaration;

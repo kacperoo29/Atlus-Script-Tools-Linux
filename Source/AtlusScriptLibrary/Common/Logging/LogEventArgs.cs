@@ -10,7 +10,7 @@ namespace AtlusScriptLibrary.Common.Logging
 
         public string Message { get; }
 
-        public LogEventArgs( string channelName, LogLevel level, string message )
+        public LogEventArgs(string channelName, LogLevel level, string message)
         {
             Level = level;
             Message = message;

@@ -10,29 +10,29 @@ namespace AtlusScriptLibrary.Common.CLI
 
         public int Index { get; private set; }
 
-        public string Current => Arguments[ Index ];
+        public string Current => Arguments[Index];
 
         public bool HasNext => Index + 1 < Arguments.Length;
 
         object IEnumerator.Current => Current;
 
-        public ArgumentIterator( string[] arguments )
+        public ArgumentIterator(string[] arguments)
         {
             Arguments = arguments;
         }
 
         public bool MoveNext()
         {
-            if ( !HasNext )
+            if (!HasNext)
                 return false;
 
             ++Index;
             return true;
         }
 
-        public bool TryGetNextArgument( out string arg )
+        public bool TryGetNextArgument(out string arg)
         {
-            if ( !MoveNext() )
+            if (!MoveNext())
             {
                 arg = null;
                 return false;

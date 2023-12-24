@@ -22,7 +22,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="name">The name of the label.</param>
         /// <param name="instructionIndex">The instruction index at which this label is located.</param>
-        public Label( string name, int instructionIndex )
+        public Label(string name, int instructionIndex)
         {
             Name = name;
             InstructionIndex = instructionIndex;
@@ -35,7 +35,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
 
         public Label Clone()
         {
-            return new Label( Name, InstructionIndex );
+            return new Label(Name, InstructionIndex);
         }
     }
 }

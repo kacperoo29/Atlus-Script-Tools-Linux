@@ -16,19 +16,19 @@
         /// </summary>
         public TValue Value;
 
-        public OffsetTo( int offset )
+        public OffsetTo(int offset)
         {
             Offset = offset;
-            Value = default( TValue );
+            Value = default(TValue);
         }
 
-        public OffsetTo( TValue value )
+        public OffsetTo(TValue value)
         {
             Offset = 0;
             Value = value;
         }
 
-        public OffsetTo( int address, TValue value )
+        public OffsetTo(int address, TValue value)
         {
             Offset = address;
             Value = value;

@@ -11,32 +11,32 @@
 
         }
 
-        public LogListener( LogLevel filter )
+        public LogListener(LogLevel filter)
         {
             Filter = filter;
         }
 
-        public LogListener( string channelName )
+        public LogListener(string channelName)
         {
             ChannelName = channelName;
         }
 
-        public void Subscribe( Logger logger )
+        public void Subscribe(Logger logger)
         {
             logger.LogEvent += OnLog;
         }
 
-        public void Unsubscribe( Logger logger )
+        public void Unsubscribe(Logger logger)
         {
             logger.LogEvent -= OnLog;
         }
 
-        protected void OnLog( object sender, LogEventArgs e )
+        protected void OnLog(object sender, LogEventArgs e)
         {
-            if ( Filter.HasFlag( e.Level ) )
-                OnLogCore( sender, e );
+            if (Filter.HasFlag(e.Level))
+                OnLogCore(sender, e);
         }
 
-        protected abstract void OnLogCore( object sender, LogEventArgs e );
+        protected abstract void OnLogCore(object sender, LogEventArgs e);
     }
 }

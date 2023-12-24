@@ -12,16 +12,16 @@ namespace AtlusScriptLibrary.Common.Libraries
 
         public string Description { get; set; }
 
-        [JsonProperty( "ConstantsPath" )]
-        [JsonConverter( typeof( ExternalJsonPathConverter ) )]
+        [JsonProperty("ConstantsPath")]
+        [JsonConverter(typeof(ExternalJsonPathConverter))]
         public List<FlowScriptModuleConstant> Constants { get; set; }
 
-        [JsonProperty( "EnumsPath" )]
-        [JsonConverter( typeof( ExternalJsonPathConverter ) )]
+        [JsonProperty("EnumsPath")]
+        [JsonConverter(typeof(ExternalJsonPathConverter))]
         public List<FlowScriptModuleEnum> Enums { get; set; }
 
-        [JsonProperty( "FunctionsPath" )]
-        [JsonConverter( typeof( ExternalJsonPathConverter ) )]
+        [JsonProperty("FunctionsPath")]
+        [JsonConverter(typeof(ExternalJsonPathConverter))]
         public List<FlowScriptModuleFunction> Functions { get; set; }
     }
 }

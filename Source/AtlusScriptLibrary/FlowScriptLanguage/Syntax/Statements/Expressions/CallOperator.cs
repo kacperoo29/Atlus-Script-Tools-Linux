@@ -12,24 +12,24 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
 
         public int Precedence => 2;
 
-        public CallOperator() : base( ValueKind.Unresolved )
+        public CallOperator() : base(ValueKind.Unresolved)
         {
             Arguments = new List<Argument>();
         }
 
-        public CallOperator( Identifier identifier, List<Argument> arguments ) : base( ValueKind.Unresolved )
+        public CallOperator(Identifier identifier, List<Argument> arguments) : base(ValueKind.Unresolved)
         {
             Identifier = identifier;
             Arguments = arguments;
         }
 
-        public CallOperator( ValueKind valueKind, Identifier identifier, List<Argument> arguments ) : base( valueKind )
+        public CallOperator(ValueKind valueKind, Identifier identifier, List<Argument> arguments) : base(valueKind)
         {
             Identifier = identifier;
             Arguments = arguments;
         }
 
-        public CallOperator( Identifier identifier, params Argument[] arguments ) : base( ValueKind.Unresolved )
+        public CallOperator(Identifier identifier, params Argument[] arguments) : base(ValueKind.Unresolved)
         {
             Identifier = identifier;
             Arguments = arguments.ToList();
@@ -38,18 +38,18 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         public override string ToString()
         {
             var builder = new StringBuilder();
-            builder.Append( Identifier );
-            builder.Append( "(" );
+            builder.Append(Identifier);
+            builder.Append("(");
 
-            if ( Arguments.Count > 0 )
-                builder.Append( Arguments[0] );
+            if (Arguments.Count > 0)
+                builder.Append(Arguments[0]);
 
-            for ( int i = 1; i < Arguments.Count; i++ )
+            for (int i = 1; i < Arguments.Count; i++)
             {
-                builder.Append( $", {Arguments[i]}" );
+                builder.Append($", {Arguments[i]}");
             }
 
-            builder.Append( ")" );
+            builder.Append(")");
 
             return builder.ToString();
         }

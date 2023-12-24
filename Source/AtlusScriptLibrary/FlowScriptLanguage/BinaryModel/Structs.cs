@@ -2,18 +2,18 @@
 
 namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
 {
-    [StructLayout( LayoutKind.Sequential, Pack = 1, Size = SIZE )]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = SIZE)]
     public struct BinaryHeader
     {
         public const int SIZE = 32;
         public const int FILE_TYPE = 0;
-        public static byte[] MAGIC = { ( byte )'F', ( byte )'L', ( byte )'W', ( byte )'0' };
+        public static byte[] MAGIC = { (byte)'F', (byte)'L', (byte)'W', (byte)'0' };
 
         // 0x00
         public byte FileType;
 
         // 0x01
-        [MarshalAs( UnmanagedType.I1 )]
+        [MarshalAs(UnmanagedType.I1)]
         public bool Compressed;
 
         // 0x02
@@ -23,7 +23,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
         public int FileSize;
 
         // 0x08
-        [MarshalAs( UnmanagedType.ByValArray, SizeConst = 4 )]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public byte[] Magic;
 
         // 0x0C
@@ -48,13 +48,13 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
         public int Padding;
     }
 
-    [StructLayout( LayoutKind.Sequential, Pack = 1, Size = SIZE )]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = SIZE)]
     public struct BinarySectionHeader
     {
         public const int SIZE = 16;
 
         // 0x00
-        [MarshalAs( UnmanagedType.U4 )]
+        [MarshalAs(UnmanagedType.U4)]
         public BinarySectionType SectionType;
 
         // 0x04
@@ -72,7 +72,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
         }
     }
 
-    [StructLayout( LayoutKind.Sequential )]
+    [StructLayout(LayoutKind.Sequential)]
     public struct BinaryLabel
     {
         public const int SIZE_V1 = 32;
@@ -90,7 +90,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
     }
 
     // union
-    [StructLayout( LayoutKind.Sequential )]
+    [StructLayout(LayoutKind.Sequential)]
     public struct BinaryInstruction
     {
         public const int SIZE = 4;

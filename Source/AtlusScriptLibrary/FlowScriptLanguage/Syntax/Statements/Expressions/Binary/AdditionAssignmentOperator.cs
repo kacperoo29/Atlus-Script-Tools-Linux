@@ -7,8 +7,8 @@
 
         }
 
-        public AdditionAssignmentOperator( Expression left, Expression right )
-            : base( left, right )
+        public AdditionAssignmentOperator(Expression left, Expression right)
+            : base(left, right)
         {
         }
 

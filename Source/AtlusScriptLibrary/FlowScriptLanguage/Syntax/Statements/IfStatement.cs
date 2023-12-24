@@ -14,7 +14,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         {
         }
 
-        public IfStatement( Expression expression, CompoundStatement body, CompoundStatement elseBody )
+        public IfStatement(Expression expression, CompoundStatement body, CompoundStatement elseBody)
         {
             Condition = expression;
             Body = body;
@@ -24,10 +24,10 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         public override string ToString()
         {
             var builder = new StringBuilder();
-            builder.Append( $"if ( {Condition} ) {Body}" );
-            if ( ElseBody != null )
+            builder.Append($"if ( {Condition} ) {Body}");
+            if (ElseBody != null)
             {
-                builder.Append( $" else {ElseBody}" );
+                builder.Append($" else {ElseBody}");
             }
 
             return builder.ToString();

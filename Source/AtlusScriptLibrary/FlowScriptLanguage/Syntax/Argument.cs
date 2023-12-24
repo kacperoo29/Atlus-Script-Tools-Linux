@@ -10,13 +10,13 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         {
         }
 
-        public Argument( Expression expression )
+        public Argument(Expression expression)
         {
             Modifier = ArgumentModifier.None;
             Expression = expression;
         }
 
-        public Argument( ArgumentModifier modifier, Expression expression )
+        public Argument(ArgumentModifier modifier, Expression expression)
         {
             Modifier = modifier;
             Expression = expression;

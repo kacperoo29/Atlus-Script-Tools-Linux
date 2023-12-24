@@ -9,7 +9,7 @@
 
         }
 
-        public Import( string filepath )
+        public Import(string filepath)
         {
             CompilationUnitFileName = filepath;
         }

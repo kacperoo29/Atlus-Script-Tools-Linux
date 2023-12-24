@@ -17,15 +17,15 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// Constructs a new speaker.
         /// </summary>
         /// <param name="name">The name of the speaker.</param>
-        public NamedSpeaker( TokenText name )
+        public NamedSpeaker(TokenText name)
         {
             Name = name;
         }
 
-        public NamedSpeaker( string name )
+        public NamedSpeaker(string name)
         {
             Name = new TokenTextBuilder()
-                .AddString( name )
+                .AddString(name)
                 .Build();
         }
 
@@ -37,9 +37,9 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         {
             string str = string.Empty;
 
-            if ( Name != null && Name.Tokens.Count > 0 )
+            if (Name != null && Name.Tokens.Count > 0)
             {
-                foreach ( var token in Name.Tokens )
+                foreach (var token in Name.Tokens)
                     str += token + " ";
             }
 
@@ -48,12 +48,12 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
 
         public IEnumerator<IToken> GetEnumerator()
         {
-            return ( ( IEnumerable<IToken> )Name ).GetEnumerator();
+            return ((IEnumerable<IToken>)Name).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ( ( IEnumerable<IToken> )Name ).GetEnumerator();
+            return ((IEnumerable<IToken>)Name).GetEnumerator();
         }
 
         /// <summary>

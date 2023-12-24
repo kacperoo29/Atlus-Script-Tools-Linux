@@ -22,7 +22,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
         private int mPosition;                          // used to calculate addresses
         private readonly List<byte[]> mSpeakerNames;    // for storing the speaker names of dialogue messages
 
-        public MessageScriptBinaryBuilder( BinaryFormatVersion version )
+        public MessageScriptBinaryBuilder(BinaryFormatVersion version)
         {
             mFormatVersion = version;
             mAddressLocations = new List<int>();
@@ -31,48 +31,48 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
             mDialogs = new List<Tuple<BinaryDialogKind, object>>();
         }
 
-        public void SetUserId( short value )
+        public void SetUserId(short value)
         {
             mUserId = value;
         }
 
-        internal void SetEncoding( Encoding encoding )
+        internal void SetEncoding(Encoding encoding)
         {
             mEncoding = encoding;
         }
 
-        public void AddDialog( MessageDialog message )
+        public void AddDialog(MessageDialog message)
         {
-            if ( mDialogs == null )
+            if (mDialogs == null)
                 mDialogs = new List<Tuple<BinaryDialogKind, object>>();
 
             BinaryMessageDialog binary;
 
-            binary.Name = message.Name.Substring( 0, Math.Min( message.Name.Length, BinaryMessageDialog.IDENTIFIER_LENGTH ) );
-            binary.PageCount = ( short )message.Pages.Count;
+            binary.Name = message.Name.Substring(0, Math.Min(message.Name.Length, BinaryMessageDialog.IDENTIFIER_LENGTH));
+            binary.PageCount = (short)message.Pages.Count;
 
-            if ( message.Speaker != null )
+            if (message.Speaker != null)
             {
-                switch ( message.Speaker.Kind )
+                switch (message.Speaker.Kind)
                 {
                     case SpeakerKind.Named:
                         {
-                            var speakerName = ProcessLine( ( ( NamedSpeaker )message.Speaker ).Name );
-                            if ( !mSpeakerNames.Any( x => x.SequenceEqual( speakerName ) ) )
-                                mSpeakerNames.Add( speakerName.ToArray() );
+                            var speakerName = ProcessLine(((NamedSpeaker)message.Speaker).Name);
+                            if (!mSpeakerNames.Any(x => x.SequenceEqual(speakerName)))
+                                mSpeakerNames.Add(speakerName.ToArray());
 
-                            binary.SpeakerId = ( ushort )mSpeakerNames.FindIndex( x => x.SequenceEqual( speakerName ) );
+                            binary.SpeakerId = (ushort)mSpeakerNames.FindIndex(x => x.SequenceEqual(speakerName));
                         }
                         break;
 
                     case SpeakerKind.Variable:
                         {
-                            binary.SpeakerId = ( ushort )( 0x8000u | ( ( VariableSpeaker )message.Speaker ).Index );
+                            binary.SpeakerId = (ushort)(0x8000u | ((VariableSpeaker)message.Speaker).Index);
                         }
                         break;
 
                     default:
-                        throw new ArgumentException( nameof( message ) );
+                        throw new ArgumentException(nameof(message));
                 }
             }
             else
@@ -84,62 +84,62 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
 
             var textBuffer = new List<byte>();
             {
-                int lineStartAddress = 0x1C + ( binary.PageCount * 4 ) + 4;
+                int lineStartAddress = 0x1C + (binary.PageCount * 4) + 4;
 
-                for ( int i = 0; i < message.Pages.Count; i++ )
+                for (int i = 0; i < message.Pages.Count; i++)
                 {
                     binary.PageStartAddresses[i] = lineStartAddress;
 
-                    var lineBytes = ProcessLine( message.Pages[i] );
-                    textBuffer.AddRange( lineBytes );
+                    var lineBytes = ProcessLine(message.Pages[i]);
+                    textBuffer.AddRange(lineBytes);
 
                     lineStartAddress += lineBytes.Count;
                 }
 
-                textBuffer.Add( 0 );
+                textBuffer.Add(0);
             }
 
             binary.TextBuffer = textBuffer.ToArray();
             binary.TextBufferSize = binary.TextBuffer.Length;
 
-            mDialogs.Add( new Tuple<BinaryDialogKind, object>( BinaryDialogKind.Message, binary ) );
+            mDialogs.Add(new Tuple<BinaryDialogKind, object>(BinaryDialogKind.Message, binary));
         }
 
-        public void AddDialog( SelectionDialog message )
+        public void AddDialog(SelectionDialog message)
         {
-            if ( mDialogs == null )
+            if (mDialogs == null)
                 mDialogs = new List<Tuple<BinaryDialogKind, object>>();
 
             BinarySelectionDialog binary;
 
-            binary.Name = message.Name.Substring( 0, Math.Min( message.Name.Length, BinarySelectionDialog.IDENTIFIER_LENGTH ) );
-            binary.Pattern = ( BinarySelectionDialogPattern )message.Pattern;
+            binary.Name = message.Name.Substring(0, Math.Min(message.Name.Length, BinarySelectionDialog.IDENTIFIER_LENGTH));
+            binary.Pattern = (BinarySelectionDialogPattern)message.Pattern;
             binary.Ext = binary.Reserved = 0;
-            binary.OptionCount = ( short )message.Options.Count;
+            binary.OptionCount = (short)message.Options.Count;
             binary.OptionStartAddresses = new int[message.Options.Count];
 
             var textBuffer = new List<byte>();
             {
-                int lineStartAddress = 0x20 + ( binary.OptionCount * 4 ) + 4;
-                for ( int i = 0; i < message.Options.Count; i++ )
+                int lineStartAddress = 0x20 + (binary.OptionCount * 4) + 4;
+                for (int i = 0; i < message.Options.Count; i++)
                 {
                     binary.OptionStartAddresses[i] = lineStartAddress;
 
-                    var lineBytes = ProcessLine( message.Options[i] );
-                    lineBytes.Add( 0 ); // intentional
+                    var lineBytes = ProcessLine(message.Options[i]);
+                    lineBytes.Add(0); // intentional
 
-                    textBuffer.AddRange( lineBytes );
+                    textBuffer.AddRange(lineBytes);
 
                     lineStartAddress += lineBytes.Count;
                 }
 
-                textBuffer.Add( 0 ); // intentional
+                textBuffer.Add(0); // intentional
             }
 
             binary.TextBuffer = textBuffer.ToArray();
             binary.TextBufferSize = binary.TextBuffer.Length;
 
-            mDialogs.Add( new Tuple<BinaryDialogKind, object>( BinaryDialogKind.Selection, binary ) );
+            mDialogs.Add(new Tuple<BinaryDialogKind, object>(BinaryDialogKind.Selection, binary));
         }
 
         public MessageScriptBinary Build()
@@ -150,134 +150,134 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
             };
 
             // note: DONT CHANGE THE ORDER
-            BuildHeaderFirstPass( ref binary.mHeader );
+            BuildHeaderFirstPass(ref binary.mHeader);
 
-            if ( mDialogs != null )
+            if (mDialogs != null)
             {
-                BuildWindowHeadersFirstPass( ref binary.mDialogHeaders );
+                BuildWindowHeadersFirstPass(ref binary.mDialogHeaders);
 
-                BuildSpeakerTableHeaderFirstPass( ref binary.mSpeakerTableHeader );
+                BuildSpeakerTableHeaderFirstPass(ref binary.mSpeakerTableHeader);
 
-                BuildWindowHeadersFinalPass( ref binary.mDialogHeaders );
+                BuildWindowHeadersFinalPass(ref binary.mDialogHeaders);
 
-                BuildSpeakerTableHeaderSecondPass( ref binary.mSpeakerTableHeader );
+                BuildSpeakerTableHeaderSecondPass(ref binary.mSpeakerTableHeader);
 
-                BuildSpeakerTableHeaderFinalPass( ref binary.mSpeakerTableHeader );
+                BuildSpeakerTableHeaderFinalPass(ref binary.mSpeakerTableHeader);
             }
 
-            BuildHeaderFinalPass( ref binary.mHeader );
+            BuildHeaderFinalPass(ref binary.mHeader);
 
             return binary;
         }
 
-        private List<byte> ProcessLine( TokenText line )
+        private List<byte> ProcessLine(TokenText line)
         {
             List<byte> bytes = new List<byte>();
 
-            foreach ( var token in line.Tokens )
+            foreach (var token in line.Tokens)
             {
-                ProcessToken( token, bytes );
+                ProcessToken(token, bytes);
             }
 
             return bytes;
         }
 
-        private void ProcessToken( IToken token, List<byte> bytes )
+        private void ProcessToken(IToken token, List<byte> bytes)
         {
-            switch ( token.Kind )
+            switch (token.Kind)
             {
                 case TokenKind.String:
-                    ProcessTextToken( ( StringToken )token, bytes );
+                    ProcessTextToken((StringToken)token, bytes);
                     break;
 
                 case TokenKind.Function:
-                    ProcessFunctionToken( ( FunctionToken )token, bytes );
+                    ProcessFunctionToken((FunctionToken)token, bytes);
                     break;
 
                 case TokenKind.CodePoint:
-                    ProcessCodePoint( ( CodePointToken )token, bytes );
+                    ProcessCodePoint((CodePointToken)token, bytes);
                     break;
 
                 case TokenKind.NewLine:
-                    bytes.Add( NewLineToken.Value );
+                    bytes.Add(NewLineToken.Value);
                     break;
 
                 default:
-                    throw new NotImplementedException( token.Kind.ToString() );
+                    throw new NotImplementedException(token.Kind.ToString());
             }
         }
 
-        private void ProcessTextToken( StringToken token, List<byte> bytes )
+        private void ProcessTextToken(StringToken token, List<byte> bytes)
         {
             byte[] textBytes;
-            if ( mEncoding != null )
+            if (mEncoding != null)
             {
-                textBytes = mEncoding.GetBytes( token.Value );
+                textBytes = mEncoding.GetBytes(token.Value);
             }
             else
             {
-                textBytes = Encoding.ASCII.GetBytes( token.Value );
+                textBytes = Encoding.ASCII.GetBytes(token.Value);
             }
 
             // simple add to the list of bytes
-            bytes.AddRange( textBytes );
+            bytes.AddRange(textBytes);
         }
 
-        private void ProcessFunctionToken( FunctionToken token, List<byte> bytes )
+        private void ProcessFunctionToken(FunctionToken token, List<byte> bytes)
         {
             // AAAA BBBB where A is a signifier value for a function and B is the encoded argument byte size
             byte functionSignifier;
 
-            if ( mFormatVersion.HasFlag( BinaryFormatVersion.Version1 ) )
+            if (mFormatVersion.HasFlag(BinaryFormatVersion.Version1))
             {
-                functionSignifier = ( byte ) ( 0xF0 | ( ( ( token.Arguments.Count * sizeof( short ) ) / 2 ) + 1 ) & 0x0F );
+                functionSignifier = (byte)(0xF0 | (((token.Arguments.Count * sizeof(short)) / 2) + 1) & 0x0F);
             }
-            else if ( mFormatVersion == BinaryFormatVersion.Version1DDS )
+            else if (mFormatVersion == BinaryFormatVersion.Version1DDS)
             {
-                byte argumentByteCount = ( byte ) ( ( token.Arguments.Count * 2 ) & 0x0F );
-                if ( argumentByteCount == 0 )
+                byte argumentByteCount = (byte)((token.Arguments.Count * 2) & 0x0F);
+                if (argumentByteCount == 0)
                     argumentByteCount = 1; // tested
 
-                functionSignifier = ( byte ) ( 0xF0 | argumentByteCount );
+                functionSignifier = (byte)(0xF0 | argumentByteCount);
             }
             else
             {
-                throw new NotImplementedException( mFormatVersion.ToString() );
+                throw new NotImplementedException(mFormatVersion.ToString());
             }
 
             // AAAB BBBB where A is the table index and B is the function index
-            byte functionId = ( byte )( ( ( token.FunctionTableIndex & 0x07 ) << 5 ) | token.FunctionIndex & 0x1F );
+            byte functionId = (byte)(((token.FunctionTableIndex & 0x07) << 5) | token.FunctionIndex & 0x1F);
 
             byte[] argumentBytes = new byte[token.Arguments.Count * 2];
 
-            for ( int i = 0; i < token.Arguments.Count; i++ )
+            for (int i = 0; i < token.Arguments.Count; i++)
             {
                 // arguments are stored in little endian regardless of the rest of the format
-                byte firstByte = ( byte )( ( token.Arguments[i] & 0xFF ) + 1 );
-                byte secondByte = ( byte )( ( ( token.Arguments[i] & 0xFF00 ) >> 8 ) + 1 );
+                byte firstByte = (byte)((token.Arguments[i] & 0xFF) + 1);
+                byte secondByte = (byte)(((token.Arguments[i] & 0xFF00) >> 8) + 1);
 
-                int byteIndex = i * sizeof( short );
+                int byteIndex = i * sizeof(short);
                 argumentBytes[byteIndex] = firstByte;
                 argumentBytes[byteIndex + 1] = secondByte;
             }
 
-            bytes.Add( functionSignifier );
-            bytes.Add( functionId );
-            bytes.AddRange( argumentBytes );
+            bytes.Add(functionSignifier);
+            bytes.Add(functionId);
+            bytes.AddRange(argumentBytes);
         }
 
-        private void ProcessCodePoint( CodePointToken token, List<byte> bytes )
+        private void ProcessCodePoint(CodePointToken token, List<byte> bytes)
         {
-            bytes.Add( token.HighSurrogate );
-            bytes.Add( token.LowSurrogate );
+            bytes.Add(token.HighSurrogate);
+            bytes.Add(token.LowSurrogate);
         }
 
-        private void BuildHeaderFirstPass( ref BinaryHeader header )
+        private void BuildHeaderFirstPass(ref BinaryHeader header)
         {
             header.FileType = BinaryHeader.FILE_TYPE;
             header.Format = 0;
             header.UserId = mUserId;
-            header.Magic = mFormatVersion.HasFlag( BinaryFormatVersion.BigEndian )
+            header.Magic = mFormatVersion.HasFlag(BinaryFormatVersion.BigEndian)
                 ? BinaryHeader.MAGIC_V1_BE
                 : BinaryHeader.MAGIC_V1;
             header.ExtSize = 0;
@@ -286,10 +286,10 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
             header.Version = 2;
         }
 
-        private void BuildWindowHeadersFirstPass( ref BinaryDialogHeader[] headers )
+        private void BuildWindowHeadersFirstPass(ref BinaryDialogHeader[] headers)
         {
             headers = new BinaryDialogHeader[mDialogs.Count];
-            for ( int i = 0; i < headers.Length; i++ )
+            for (int i = 0; i < headers.Length; i++)
             {
                 headers[i].Kind = mDialogs[i].Item1;
                 MoveToNextIntPosition();
@@ -299,7 +299,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
             }
         }
 
-        private void BuildSpeakerTableHeaderFirstPass( ref BinarySpeakerTableHeader speakerHeader )
+        private void BuildSpeakerTableHeaderFirstPass(ref BinarySpeakerTableHeader speakerHeader)
         {
             AddAddressLocation();
             MoveToNextIntPosition();
@@ -314,60 +314,60 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
             MoveToNextIntPosition();
         }
 
-        private void BuildWindowHeadersFinalPass( ref BinaryDialogHeader[] headers )
+        private void BuildWindowHeadersFinalPass(ref BinaryDialogHeader[] headers)
         {
-            for ( int i = 0; i < headers.Length; i++ )
+            for (int i = 0; i < headers.Length; i++)
             {
                 headers[i].Data.Offset = GetAlignedAddress();
-                headers[i].Data.Value = UpdateDialogAddressBase( mDialogs[i].Item2 );
+                headers[i].Data.Value = UpdateDialogAddressBase(mDialogs[i].Item2);
             }
         }
 
-        private void BuildSpeakerTableHeaderSecondPass( ref BinarySpeakerTableHeader speakerTableHeader )
+        private void BuildSpeakerTableHeaderSecondPass(ref BinarySpeakerTableHeader speakerTableHeader)
         {
             speakerTableHeader.SpeakerNameArray.Offset = GetAlignedAddress();
-            for ( int i = 0; i < speakerTableHeader.SpeakerCount; i++ )
+            for (int i = 0; i < speakerTableHeader.SpeakerCount; i++)
             {
                 AddAddressLocation();
                 MoveToNextIntPosition();
             }
         }
 
-        private void BuildSpeakerTableHeaderFinalPass( ref BinarySpeakerTableHeader speakerTableHeader )
+        private void BuildSpeakerTableHeaderFinalPass(ref BinarySpeakerTableHeader speakerTableHeader)
         {
             speakerTableHeader.SpeakerNameArray.Value = new OffsetTo<List<byte>>[speakerTableHeader.SpeakerCount];
-            for ( int i = 0; i < speakerTableHeader.SpeakerNameArray.Value.Length; i++ )
+            for (int i = 0; i < speakerTableHeader.SpeakerNameArray.Value.Length; i++)
             {
                 speakerTableHeader.SpeakerNameArray.Value[i].Offset = GetAddress();
                 speakerTableHeader.SpeakerNameArray.Value[i].Value = mSpeakerNames[i].ToList();
 
                 // todo: maybe the speakername should include the trailing 0
-                MoveToNextPositionByOffset( mSpeakerNames[i].Length + 1 );
+                MoveToNextPositionByOffset(mSpeakerNames[i].Length + 1);
             }
         }
 
-        private void BuildHeaderFinalPass( ref BinaryHeader header )
+        private void BuildHeaderFinalPass(ref BinaryHeader header)
         {
             header.RelocationTable.Offset = GetAlignedAddress() + BinaryHeader.SIZE;
             header.RelocationTable.Value =
-                RelocationTableEncoding.Encode( mAddressLocations, BinaryHeader.SIZE );
+                RelocationTableEncoding.Encode(mAddressLocations, BinaryHeader.SIZE);
             header.RelocationTableSize = header.RelocationTable.Value.Length;
             mPosition += header.RelocationTableSize;
 
             header.FileSize = mPosition;
         }
 
-        private object UpdateDialogAddressBase( object dialog )
+        private object UpdateDialogAddressBase(object dialog)
         {
             int dialogAddress = GetAddress();
 
-            switch ( dialog )
+            switch (dialog)
             {
                 case BinaryMessageDialog dialogue:
                     {
                         mPosition += 0x1C;
 
-                        for ( int i = 0; i < dialogue.PageStartAddresses.Length; i++ )
+                        for (int i = 0; i < dialogue.PageStartAddresses.Length; i++)
                         {
                             AddAddressLocation();
                             dialogue.PageStartAddresses[i] += dialogAddress;
@@ -382,7 +382,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
                     {
                         mPosition += 0x20;
 
-                        for ( int i = 0; i < selection.OptionStartAddresses.Length; i++ )
+                        for (int i = 0; i < selection.OptionStartAddresses.Length; i++)
                         {
                             AddAddressLocation();
                             selection.OptionStartAddresses[i] += dialogAddress;
@@ -394,7 +394,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
                     break;
 
                 default:
-                    throw new NotImplementedException( dialog.GetType().ToString() );
+                    throw new NotImplementedException(dialog.GetType().ToString());
             }
 
             return dialog;
@@ -402,22 +402,22 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
 
         private void MoveToNextIntPosition()
         {
-            mPosition += sizeof( int );
+            mPosition += sizeof(int);
         }
 
-        private void MoveToNextPositionByOffset( int offset )
+        private void MoveToNextPositionByOffset(int offset)
         {
             mPosition += offset;
         }
 
         private void AddAddressLocation()
         {
-            mAddressLocations.Add( mPosition );
+            mAddressLocations.Add(mPosition);
         }
 
         private void AlignPosition()
         {
-            mPosition = ( mPosition + 3 ) & ~3;
+            mPosition = (mPosition + 3) & ~3;
         }
 
         private int GetAddress()

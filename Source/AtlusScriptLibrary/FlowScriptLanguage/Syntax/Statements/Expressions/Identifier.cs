@@ -4,20 +4,20 @@
     {
         public string Text { get; set; }
 
-        public Identifier() : base( ValueKind.Unresolved )
+        public Identifier() : base(ValueKind.Unresolved)
         {
         }
 
-        public Identifier( ValueKind kind ) : base( kind )
+        public Identifier(ValueKind kind) : base(kind)
         {
         }
 
-        public Identifier( string text ) : base( ValueKind.Unresolved )
+        public Identifier(string text) : base(ValueKind.Unresolved)
         {
             Text = text;
         }
 
-        public Identifier( ValueKind kind, string text ) : base( kind )
+        public Identifier(ValueKind kind, string text) : base(kind)
         {
             Text = text;
         }

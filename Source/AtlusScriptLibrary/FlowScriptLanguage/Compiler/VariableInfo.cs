@@ -10,9 +10,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler
 
         public int Size { get; set; } = 1;
 
-        public short GetArrayElementIndex( int index )
+        public short GetArrayElementIndex(int index)
         {
-            if ( Declaration.Modifier.Kind != VariableModifierKind.Global )
+            if (Declaration.Modifier.Kind != VariableModifierKind.Global)
                 return (short)(Index + index);
             else
                 return (short)(Index - index);

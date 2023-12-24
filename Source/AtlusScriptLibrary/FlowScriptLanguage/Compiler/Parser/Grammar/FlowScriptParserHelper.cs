@@ -5,39 +5,39 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Compiler.Parser.Grammar
 {
     public static class FlowScriptParserHelper
     {
-        public static FlowScriptParser.CompilationUnitContext ParseCompilationUnit( string input, IAntlrErrorListener<IToken> errorListener = null )
+        public static FlowScriptParser.CompilationUnitContext ParseCompilationUnit(string input, IAntlrErrorListener<IToken> errorListener = null)
         {
-            var inputStream = new AntlrInputStream( input );
-            return ParseCompilationUnit( inputStream, errorListener );
+            var inputStream = new AntlrInputStream(input);
+            return ParseCompilationUnit(inputStream, errorListener);
         }
 
-        public static FlowScriptParser.CompilationUnitContext ParseCompilationUnit( TextReader input, IAntlrErrorListener<IToken> errorListener = null )
+        public static FlowScriptParser.CompilationUnitContext ParseCompilationUnit(TextReader input, IAntlrErrorListener<IToken> errorListener = null)
         {
-            var inputStream = new AntlrInputStream( input );
-            return ParseCompilationUnit( inputStream, errorListener );
+            var inputStream = new AntlrInputStream(input);
+            return ParseCompilationUnit(inputStream, errorListener);
         }
 
-        public static FlowScriptParser.CompilationUnitContext ParseCompilationUnit( Stream input, IAntlrErrorListener<IToken> errorListener = null )
+        public static FlowScriptParser.CompilationUnitContext ParseCompilationUnit(Stream input, IAntlrErrorListener<IToken> errorListener = null)
         {
-            var inputStream = new AntlrInputStream( input );
-            return ParseCompilationUnit( inputStream, errorListener );
+            var inputStream = new AntlrInputStream(input);
+            return ParseCompilationUnit(inputStream, errorListener);
         }
 
-        private static FlowScriptParser.CompilationUnitContext ParseCompilationUnit( AntlrInputStream inputStream, IAntlrErrorListener<IToken> errorListener = null )
+        private static FlowScriptParser.CompilationUnitContext ParseCompilationUnit(AntlrInputStream inputStream, IAntlrErrorListener<IToken> errorListener = null)
         {
-            var lexer = new FlowScriptLexer( inputStream );
-            var tokenStream = new CommonTokenStream( lexer );
+            var lexer = new FlowScriptLexer(inputStream);
+            var tokenStream = new CommonTokenStream(lexer);
 
             // parser
-            var parser = new FlowScriptParser( tokenStream );
+            var parser = new FlowScriptParser(tokenStream);
             parser.BuildParseTree = true;
             //parser.ErrorHandler = new BailErrorStrategy();
             parser.ErrorHandler = new DefaultErrorStrategy();
 
-            if ( errorListener != null )
+            if (errorListener != null)
             {
                 parser.RemoveErrorListeners();
-                parser.AddErrorListener( errorListener );
+                parser.AddErrorListener(errorListener);
             }
 
             var cst = parser.compilationUnit();

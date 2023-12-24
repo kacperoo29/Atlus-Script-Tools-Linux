@@ -10,12 +10,12 @@ namespace AtlusScriptLibrary.Common.Libraries
 
         public string ShortName { get; set; }
 
-        [JsonProperty( "FlowScriptModulesPath")]
-        [JsonConverter( typeof( ExternalJsonPathConverter) )]
+        [JsonProperty("FlowScriptModulesPath")]
+        [JsonConverter(typeof(ExternalJsonPathConverter))]
         public List<FlowScriptModule> FlowScriptModules { get; set; }
 
-        [JsonProperty( "MessageScriptLibraryPath" )]
-        [JsonConverter( typeof(ExternalJsonPathConverter) ) ]
+        [JsonProperty("MessageScriptLibraryPath")]
+        [JsonConverter(typeof(ExternalJsonPathConverter))]
         public List<MessageScriptLibrary> MessageScriptLibraries { get; set; }
     }
 }

@@ -10,25 +10,25 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
     // Todo: ensure immutability
     public sealed class FlowScriptBinary
     {
-        public static FlowScriptBinary FromFile( string path )
+        public static FlowScriptBinary FromFile(string path)
         {
-            return FromFile( path, BinaryFormatVersion.Unknown );
+            return FromFile(path, BinaryFormatVersion.Unknown);
         }
 
-        public static FlowScriptBinary FromFile( string path, BinaryFormatVersion version )
+        public static FlowScriptBinary FromFile(string path, BinaryFormatVersion version)
         {
-            using ( var fileStream = File.OpenRead( path ) )
-                return FromStream( fileStream, version );
+            using (var fileStream = File.OpenRead(path))
+                return FromStream(fileStream, version);
         }
 
-        public static FlowScriptBinary FromStream( Stream stream, bool leaveOpen = false )
+        public static FlowScriptBinary FromStream(Stream stream, bool leaveOpen = false)
         {
-            return FromStream( stream, BinaryFormatVersion.Unknown, leaveOpen );
+            return FromStream(stream, BinaryFormatVersion.Unknown, leaveOpen);
         }
 
-        public static FlowScriptBinary FromStream( Stream stream, BinaryFormatVersion version, bool leaveOpen = false )
+        public static FlowScriptBinary FromStream(Stream stream, BinaryFormatVersion version, bool leaveOpen = false)
         {
-            using ( var reader = new FlowScriptBinaryReader( stream, version, leaveOpen ) )
+            using (var reader = new FlowScriptBinaryReader(stream, version, leaveOpen))
             {
                 return reader.ReadBinary();
             }
@@ -53,9 +53,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
         {
             get
             {
-                if ( mSectionHeaders == null )
+                if (mSectionHeaders == null)
                     return null;
-                return new ReadOnlyCollection<BinarySectionHeader>( mSectionHeaders );
+                return new ReadOnlyCollection<BinarySectionHeader>(mSectionHeaders);
             }
         }
 
@@ -63,9 +63,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
         {
             get
             {
-                if ( mProcedureLabelSection == null )
+                if (mProcedureLabelSection == null)
                     return null;
-                return new ReadOnlyCollection<BinaryLabel>( mProcedureLabelSection );
+                return new ReadOnlyCollection<BinaryLabel>(mProcedureLabelSection);
             }
         }
 
@@ -73,9 +73,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
         {
             get
             {
-                if ( mJumpLabelSection == null )
+                if (mJumpLabelSection == null)
                     return null;
-                return new ReadOnlyCollection<BinaryLabel>( mJumpLabelSection );
+                return new ReadOnlyCollection<BinaryLabel>(mJumpLabelSection);
             }
         }
 
@@ -83,9 +83,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
         {
             get
             {
-                if ( mTextSection == null )
+                if (mTextSection == null)
                     return null;
-                return new ReadOnlyCollection<BinaryInstruction>( mTextSection );
+                return new ReadOnlyCollection<BinaryInstruction>(mTextSection);
             }
         }
 
@@ -97,19 +97,19 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
                 // Fixup size
                 int sizeDifference = value.Header.FileSize - mMessageScriptSection.Header.FileSize;
 
-                if ( sizeDifference != 0 )
+                if (sizeDifference != 0)
                 {
-                    var sectionHeaderIndex = Array.FindIndex( mSectionHeaders, x => x.SectionType == BinarySectionType.MessageScriptSection );
+                    var sectionHeaderIndex = Array.FindIndex(mSectionHeaders, x => x.SectionType == BinarySectionType.MessageScriptSection);
 
-                    if ( sectionHeaderIndex != -1 )
+                    if (sectionHeaderIndex != -1)
                     {
                         mSectionHeaders[sectionHeaderIndex].ElementCount = mMessageScriptSection.Header.FileSize;
 
                         int lastHeaderIndex = mSectionHeaders.Length - 1;
-                        if ( sectionHeaderIndex != lastHeaderIndex )
+                        if (sectionHeaderIndex != lastHeaderIndex)
                         {
                             int numHeadersToFixUp = sectionHeaderIndex - lastHeaderIndex;
-                            for ( int i = sectionHeaderIndex + 1; i < numHeadersToFixUp; i++ )
+                            for (int i = sectionHeaderIndex + 1; i < numHeadersToFixUp; i++)
                             {
                                 mSectionHeaders[i].FirstElementAddress += sizeDifference;
                             }
@@ -117,7 +117,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
                     }
                     else
                     {
-                        throw new NotImplementedException( "Adding a MessageScript section where it does not exist yet is not implemented" );
+                        throw new NotImplementedException("Adding a MessageScript section where it does not exist yet is not implemented");
                     }
                 }
 
@@ -129,9 +129,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
         {
             get
             {
-                if ( mStringSection == null )
+                if (mStringSection == null)
                     return null;
-                return new ReadOnlyCollection<byte>( mStringSection );
+                return new ReadOnlyCollection<byte>(mStringSection);
             }
         }
 
@@ -145,23 +145,23 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel
         {
         }
 
-        public void ToFile( string path )
+        public void ToFile(string path)
         {
-            ToStream( FileUtils.Create( path ) );
+            ToStream(FileUtils.Create(path));
         }
 
         public Stream ToStream()
         {
             var stream = new MemoryStream();
-            ToStream( stream, true );
+            ToStream(stream, true);
             return stream;
         }
 
-        public void ToStream( Stream stream, bool leaveOpen = false )
+        public void ToStream(Stream stream, bool leaveOpen = false)
         {
-            using ( var writer = new FlowScriptBinaryWriter( stream, mFormatVersion, leaveOpen ) )
+            using (var writer = new FlowScriptBinaryWriter(stream, mFormatVersion, leaveOpen))
             {
-                writer.WriteBinary( this );
+                writer.WriteBinary(this);
             }
         }
     }

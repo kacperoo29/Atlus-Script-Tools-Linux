@@ -13,24 +13,24 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
             Statements = new List<Statement>();
         }
 
-        public CompoundStatement( List<Statement> statements )
+        public CompoundStatement(List<Statement> statements)
         {
             Statements = statements;
         }
 
-        public CompoundStatement( params Statement[] statements )
+        public CompoundStatement(params Statement[] statements)
         {
             Statements = statements.ToList();
         }
 
         public IEnumerator<Statement> GetEnumerator()
         {
-            return ( ( IEnumerable<Statement> )Statements ).GetEnumerator();
+            return ((IEnumerable<Statement>)Statements).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ( ( IEnumerable<Statement> )Statements ).GetEnumerator();
+            return ((IEnumerable<Statement>)Statements).GetEnumerator();
         }
 
         public override string ToString()

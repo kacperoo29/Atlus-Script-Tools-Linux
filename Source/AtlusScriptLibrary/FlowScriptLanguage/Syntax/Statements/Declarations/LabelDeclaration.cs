@@ -2,11 +2,11 @@
 {
     public class LabelDeclaration : Declaration
     {
-        public LabelDeclaration() : base( DeclarationType.Label )
+        public LabelDeclaration() : base(DeclarationType.Label)
         {
         }
 
-        public LabelDeclaration( Identifier identifier ) : base( DeclarationType.Label, identifier )
+        public LabelDeclaration(Identifier identifier) : base(DeclarationType.Label, identifier)
         {
 
         }

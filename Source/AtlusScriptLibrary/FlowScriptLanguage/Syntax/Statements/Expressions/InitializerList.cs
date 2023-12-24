@@ -16,17 +16,17 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         {
             var builder = new StringBuilder();
 
-            builder.Append( "{ " );
+            builder.Append("{ ");
 
-            if ( Expressions.Count > 0 )
-                builder.Append( Expressions[0] );
+            if (Expressions.Count > 0)
+                builder.Append(Expressions[0]);
 
-            for ( int i = 1; i < Expressions.Count; i++ )
+            for (int i = 1; i < Expressions.Count; i++)
             {
-                builder.Append( $", {Expressions[i]}" );
+                builder.Append($", {Expressions[i]}");
             }
 
-            builder.Append( " }" );
+            builder.Append(" }");
 
             return builder.ToString();
         }

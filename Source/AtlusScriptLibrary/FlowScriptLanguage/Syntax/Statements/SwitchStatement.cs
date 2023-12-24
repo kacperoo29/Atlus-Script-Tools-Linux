@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
 {
-    public class 
+    public class
         SwitchStatement : Statement
     {
         public Expression SwitchOn { get; set; }
@@ -15,7 +15,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
             Labels = new List<FlowScriptSwitchLabel>();
         }
 
-        public SwitchStatement( Expression switchOn, params FlowScriptSwitchLabel[] labels )
+        public SwitchStatement(Expression switchOn, params FlowScriptSwitchLabel[] labels)
         {
             SwitchOn = switchOn;
             Labels = labels.ToList();

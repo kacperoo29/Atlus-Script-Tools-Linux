@@ -7,8 +7,8 @@
 
         }
 
-        public ModulusAssignmentOperator( Expression left, Expression right )
-            : base( left, right )
+        public ModulusAssignmentOperator(Expression left, Expression right)
+            : base(left, right)
         {
         }
 

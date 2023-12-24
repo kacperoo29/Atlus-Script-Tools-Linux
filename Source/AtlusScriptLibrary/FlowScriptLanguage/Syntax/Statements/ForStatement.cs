@@ -14,7 +14,7 @@
         {
         }
 
-        public ForStatement( Statement initializer, Expression condition, Expression afterLoop, CompoundStatement body )
+        public ForStatement(Statement initializer, Expression condition, Expression afterLoop, CompoundStatement body)
         {
             Initializer = initializer;
             Condition = condition;

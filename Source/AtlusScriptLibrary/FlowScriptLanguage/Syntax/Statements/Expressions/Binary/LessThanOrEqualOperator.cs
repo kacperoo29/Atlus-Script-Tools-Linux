@@ -4,12 +4,12 @@
     {
         public int Precedence => 8;
 
-        public LessThanOrEqualOperator() : base( ValueKind.Bool )
+        public LessThanOrEqualOperator() : base(ValueKind.Bool)
         {
         }
 
-        public LessThanOrEqualOperator( Expression left, Expression right )
-            : base( ValueKind.Bool, left, right )
+        public LessThanOrEqualOperator(Expression left, Expression right)
+            : base(ValueKind.Bool, left, right)
         {
 
         }

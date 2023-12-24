@@ -10,7 +10,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
 
         public Label ReferencedLabel { get; }
 
-        internal EvaluatedStatement( Statement statement, int instructionIndex, Label referencedLabel )
+        internal EvaluatedStatement(Statement statement, int instructionIndex, Label referencedLabel)
         {
             Statement = statement;
             InstructionIndex = instructionIndex;

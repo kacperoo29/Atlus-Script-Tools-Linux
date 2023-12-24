@@ -4,12 +4,12 @@
     {
         public int Precedence => 5;
 
-        public DivisionOperator() : base( ValueKind.Unresolved )
+        public DivisionOperator() : base(ValueKind.Unresolved)
         {
         }
 
-        public DivisionOperator( Expression left, Expression right )
-            : base( ValueKind.Unresolved, left, right )
+        public DivisionOperator(Expression left, Expression right)
+            : base(ValueKind.Unresolved, left, right)
         {
 
         }

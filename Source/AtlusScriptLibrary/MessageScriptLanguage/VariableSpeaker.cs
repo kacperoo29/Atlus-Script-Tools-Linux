@@ -11,7 +11,7 @@
         /// Constructs a new variable speaker.
         /// </summary>
         /// <param name="index">The index of the speaker name variable.</param>
-        public VariableSpeaker( int index )
+        public VariableSpeaker(int index)
         {
             Index = index;
         }

@@ -4,12 +4,12 @@
     {
         public int Precedence => 9;
 
-        public NonEqualityOperator() : base( ValueKind.Bool )
+        public NonEqualityOperator() : base(ValueKind.Bool)
         {
         }
 
-        public NonEqualityOperator( Expression left, Expression right )
-            : base( ValueKind.Bool, left, right )
+        public NonEqualityOperator(Expression left, Expression right)
+            : base(ValueKind.Bool, left, right)
         {
 
         }

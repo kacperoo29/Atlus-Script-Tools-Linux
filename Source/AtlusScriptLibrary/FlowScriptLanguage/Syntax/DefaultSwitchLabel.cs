@@ -6,8 +6,8 @@
         {
         }
 
-        public DefaultSwitchLabel( params Statement[] statements )
-            : base( statements )
+        public DefaultSwitchLabel(params Statement[] statements)
+            : base(statements)
         {
         }
 

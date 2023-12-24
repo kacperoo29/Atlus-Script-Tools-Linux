@@ -6,7 +6,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Interpreter
 
         public object Value { get; }
 
-        internal StackValue( StackValueKind kind, object value )
+        internal StackValue(StackValueKind kind, object value)
         {
             Kind = kind;
             Value = value;

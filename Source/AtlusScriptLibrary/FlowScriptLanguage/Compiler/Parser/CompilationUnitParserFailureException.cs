@@ -10,15 +10,15 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
         {
         }
 
-        public FlowScriptSyntaxParserFailureException( string message ) : base( message )
+        public FlowScriptSyntaxParserFailureException(string message) : base(message)
         {
         }
 
-        public FlowScriptSyntaxParserFailureException( string message, Exception innerException ) : base( message, innerException )
+        public FlowScriptSyntaxParserFailureException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
-        protected FlowScriptSyntaxParserFailureException( SerializationInfo info, StreamingContext context ) : base( info, context )
+        protected FlowScriptSyntaxParserFailureException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

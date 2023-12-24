@@ -30,7 +30,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// Constructs a new selection dialog with just an identifier.
         /// </summary>
         /// <param name="identifier">The text identifier of the window.</param>
-        public SelectionDialog( string identifier, SelectionDialogPattern pattern = SelectionDialogPattern.Top )
+        public SelectionDialog(string identifier, SelectionDialogPattern pattern = SelectionDialogPattern.Top)
         {
             Name = identifier;
             Pattern = pattern;
@@ -42,7 +42,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// </summary>
         /// <param name="identifier">The text identifier of the dialog.</param>
         /// <param name="pages">The list of lines in the dialog.</param>
-        public SelectionDialog( string identifier, SelectionDialogPattern pattern, List<TokenText> pages )
+        public SelectionDialog(string identifier, SelectionDialogPattern pattern, List<TokenText> pages)
         {
             Name = identifier;
             Pattern = pattern;
@@ -54,7 +54,7 @@ namespace AtlusScriptLibrary.MessageScriptLanguage
         /// </summary>
         /// <param name="identifier">The text identifier of the dialog.</param>
         /// <param name="pages">The list of lines in the dialog.</param>
-        public SelectionDialog( string identifier, SelectionDialogPattern pattern, params TokenText[] pages )
+        public SelectionDialog(string identifier, SelectionDialogPattern pattern, params TokenText[] pages)
         {
             Name = identifier;
             Pattern = pattern;

@@ -14,7 +14,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
             Declarations = new List<Declaration>();
         }
 
-        public CompilationUnit( List<Import> imports, List<Declaration> declarations )
+        public CompilationUnit(List<Import> imports, List<Declaration> declarations)
         {
             Imports = imports;
             Declarations = declarations;

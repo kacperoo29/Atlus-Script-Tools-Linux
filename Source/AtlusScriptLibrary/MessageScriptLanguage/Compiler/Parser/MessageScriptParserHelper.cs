@@ -6,38 +6,38 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.Compiler.Parser
 {
     public static class MessageScriptParserHelper
     {
-        public static MessageScriptParser.CompilationUnitContext ParseCompilationUnit( string input, IAntlrErrorListener<Antlr4.Runtime.IToken> errorListener = null )
+        public static MessageScriptParser.CompilationUnitContext ParseCompilationUnit(string input, IAntlrErrorListener<Antlr4.Runtime.IToken> errorListener = null)
         {
-            var inputStream = new AntlrInputStream( input );
-            return ParseCompilationUnit( inputStream, errorListener );
+            var inputStream = new AntlrInputStream(input);
+            return ParseCompilationUnit(inputStream, errorListener);
         }
 
-        public static MessageScriptParser.CompilationUnitContext ParseCompilationUnit( TextReader input, IAntlrErrorListener<Antlr4.Runtime.IToken> errorListener = null )
+        public static MessageScriptParser.CompilationUnitContext ParseCompilationUnit(TextReader input, IAntlrErrorListener<Antlr4.Runtime.IToken> errorListener = null)
         {
-            var inputStream = new AntlrInputStream( input );
-            return ParseCompilationUnit( inputStream, errorListener );
+            var inputStream = new AntlrInputStream(input);
+            return ParseCompilationUnit(inputStream, errorListener);
         }
 
-        public static MessageScriptParser.CompilationUnitContext ParseCompilationUnit( Stream input, IAntlrErrorListener<Antlr4.Runtime.IToken> errorListener = null )
+        public static MessageScriptParser.CompilationUnitContext ParseCompilationUnit(Stream input, IAntlrErrorListener<Antlr4.Runtime.IToken> errorListener = null)
         {
-            var inputStream = new AntlrInputStream( input );
-            return ParseCompilationUnit( inputStream, errorListener );
+            var inputStream = new AntlrInputStream(input);
+            return ParseCompilationUnit(inputStream, errorListener);
         }
 
-        private static MessageScriptParser.CompilationUnitContext ParseCompilationUnit( AntlrInputStream inputStream, IAntlrErrorListener<Antlr4.Runtime.IToken> errorListener = null )
+        private static MessageScriptParser.CompilationUnitContext ParseCompilationUnit(AntlrInputStream inputStream, IAntlrErrorListener<Antlr4.Runtime.IToken> errorListener = null)
         {
-            var lexer = new MessageScriptLexer( inputStream );
-            var tokenStream = new CommonTokenStream( lexer );
+            var lexer = new MessageScriptLexer(inputStream);
+            var tokenStream = new CommonTokenStream(lexer);
 
             // parser
-            var parser = new MessageScriptParser( tokenStream );
+            var parser = new MessageScriptParser(tokenStream);
             parser.BuildParseTree = true;
             //parser.ErrorHandler = new BailErrorStrategy();
 
-            if ( errorListener != null )
+            if (errorListener != null)
             {
                 parser.RemoveErrorListeners();
-                parser.AddErrorListener( errorListener );
+                parser.AddErrorListener(errorListener);
             }
 
             var cst = parser.compilationUnit();

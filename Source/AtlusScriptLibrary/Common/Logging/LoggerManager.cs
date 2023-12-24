@@ -8,34 +8,34 @@ namespace AtlusScriptLibrary.Common.Logging
         private static List<Logger> sLoggers = new List<Logger>();
         private static List<LogListener> sListeners = new List<LogListener>();
 
-        public static void RegisterLogger( Logger logger )
+        public static void RegisterLogger(Logger logger)
         {
-            sLoggers.Add( logger );
+            sLoggers.Add(logger);
         }
 
-        public static void UnregisterLogger( Logger logger )
+        public static void UnregisterLogger(Logger logger)
         {
-            sLoggers.Remove( logger );
+            sLoggers.Remove(logger);
         }
 
-        public static void RegisterListener( LogListener listener )
+        public static void RegisterListener(LogListener listener)
         {
-            foreach ( var item in sLoggers.Where( x => x.Name == listener.ChannelName ) )
+            foreach (var item in sLoggers.Where(x => x.Name == listener.ChannelName))
             {
-                listener.Subscribe( item );
+                listener.Subscribe(item);
             }
 
-            sListeners.Add( listener );
+            sListeners.Add(listener);
         }
 
-        public static void UnregisterListener( LogListener listener )
+        public static void UnregisterListener(LogListener listener)
         {
-            foreach ( var item in sLoggers.Where( x => x.Name == listener.ChannelName ) )
+            foreach (var item in sLoggers.Where(x => x.Name == listener.ChannelName))
             {
-                listener.Unsubscribe( item );
+                listener.Unsubscribe(item);
             }
 
-            sListeners.Remove( listener );
+            sListeners.Remove(listener);
         }
     }
 }

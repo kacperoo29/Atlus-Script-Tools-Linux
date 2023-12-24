@@ -7,7 +7,7 @@
 
         }
 
-        public PrefixIncrementOperator( Expression operand ) : base( operand )
+        public PrefixIncrementOperator(Expression operand) : base(operand)
         {
 
         }

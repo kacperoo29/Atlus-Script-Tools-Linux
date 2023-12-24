@@ -8,7 +8,7 @@
         {
         }
 
-        public GotoStatement( Expression label )
+        public GotoStatement(Expression label)
         {
             Label = label;
         }

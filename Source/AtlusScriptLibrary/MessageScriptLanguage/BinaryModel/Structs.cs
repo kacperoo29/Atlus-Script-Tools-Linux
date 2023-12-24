@@ -10,13 +10,13 @@ namespace AtlusScriptLibrary.MessageScriptLanguage.BinaryModel
         public const byte FILE_TYPE = 7;
 
         // ReSharper disable once InconsistentNaming
-        public static byte[] MAGIC_V0 { get; } = { ( byte )'M', ( byte )'S', ( byte )'G', ( byte )'0' };
+        public static byte[] MAGIC_V0 { get; } = { (byte)'M', (byte)'S', (byte)'G', (byte)'0' };
 
         // ReSharper disable once InconsistentNaming
-        public static byte[] MAGIC_V1 { get; } = { ( byte )'M', ( byte )'S', ( byte )'G', ( byte )'1' };
+        public static byte[] MAGIC_V1 { get; } = { (byte)'M', (byte)'S', (byte)'G', (byte)'1' };
 
         // ReSharper disable once InconsistentNaming
-        public static byte[] MAGIC_V1_BE { get; } = { ( byte ) '1', ( byte ) 'G', ( byte ) 'S', ( byte ) 'M' };
+        public static byte[] MAGIC_V1_BE { get; } = { (byte)'1', (byte)'G', (byte)'S', (byte)'M' };
 
         // 00
         public byte FileType;

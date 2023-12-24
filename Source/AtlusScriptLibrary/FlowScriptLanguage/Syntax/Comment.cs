@@ -2,7 +2,7 @@
 {
     public class Comment : Statement
     {
-        public Comment( string content, bool inline )
+        public Comment(string content, bool inline)
         {
             Content = content;
             Inline = inline;

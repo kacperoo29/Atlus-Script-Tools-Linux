@@ -8,7 +8,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Decompiler
 
         public int InstructionIndex { get; }
 
-        internal EvaluatedIdentifierReference( Identifier identifier, int instructionIndex )
+        internal EvaluatedIdentifierReference(Identifier identifier, int instructionIndex)
         {
             Identifier = identifier;
             InstructionIndex = instructionIndex;

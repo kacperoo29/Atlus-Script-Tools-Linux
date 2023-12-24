@@ -12,20 +12,20 @@ namespace AtlusScriptLibrary.Common.Text
 
         public override Encoding Encoding => mWriter.Encoding;
 
-        public FileTextWriter( string path, bool append = false )
+        public FileTextWriter(string path, bool append = false)
         {
-            Path = path ?? throw new ArgumentNullException( nameof( path ) );
-            mWriter = new StreamWriter( path, append );
+            Path = path ?? throw new ArgumentNullException(nameof(path));
+            mWriter = new StreamWriter(path, append);
         }
 
-        public override void Write( char value )
+        public override void Write(char value)
         {
-            mWriter.Write( value );
+            mWriter.Write(value);
         }
 
-        protected override void Dispose( bool disposing )
+        protected override void Dispose(bool disposing)
         {
-            if ( disposing )
+            if (disposing)
             {
                 mWriter.Dispose();
             }

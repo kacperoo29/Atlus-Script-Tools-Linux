@@ -12,13 +12,13 @@
             Index = null;
         }
 
-        public VariableModifier( VariableModifierKind kind )
+        public VariableModifier(VariableModifierKind kind)
         {
             Kind = kind;
             Index = null;
         }
 
-        public VariableModifier( VariableModifierKind kind, IntLiteral index )
+        public VariableModifier(VariableModifierKind kind, IntLiteral index)
         {
             Kind = kind;
             Index = index;

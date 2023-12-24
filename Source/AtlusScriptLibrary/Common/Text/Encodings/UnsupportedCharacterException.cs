@@ -9,11 +9,11 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
 
         public string Character { get; }
 
-        public UnsupportedCharacterException( string encodingName, string c )
-            : base( $"Encoding {encodingName} does not support character: {c} ({EncodeNonAsciiCharacters(c)})" )
+        public UnsupportedCharacterException(string encodingName, string c)
+            : base($"Encoding {encodingName} does not support character: {c} ({EncodeNonAsciiCharacters(c)})")
         {
             EncodingName = encodingName;
-            Character    = c;
+            Character = c;
         }
 
         static string EncodeNonAsciiCharacters(string value)

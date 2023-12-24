@@ -25,9 +25,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="path">Path to the file to load.</param>
         /// <returns>A <see cref="FlowScript"/> instance.</returns>
-        public static FlowScript FromFile( string path, Encoding encoding = null )
+        public static FlowScript FromFile(string path, Encoding encoding = null)
         {
-            return FromFile( path, encoding, FormatVersion.Unknown );
+            return FromFile(path, encoding, FormatVersion.Unknown);
         }
 
         /// <summary>
@@ -36,10 +36,10 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <param name="path">Path to the file to load.</param>
         /// <param name="version">Format version the loader should use.</param>
         /// <returns>A <see cref="FlowScript"/> instance.</returns>
-        public static FlowScript FromFile( string path, Encoding encoding, FormatVersion version )
+        public static FlowScript FromFile(string path, Encoding encoding, FormatVersion version)
         {
-            using ( var stream = File.OpenRead( path ) )
-                return FromStream( stream, encoding, version, false );
+            using (var stream = File.OpenRead(path))
+                return FromStream(stream, encoding, version, false);
         }
 
         /// <summary>
@@ -48,9 +48,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <param name="stream">Data stream.</param>
         /// <param name="version">Format version the loader should use.</param>
         /// <returns>A <see cref="FlowScript"/> instance.</returns>
-        public static FlowScript FromStream( Stream stream, Encoding encoding = null, bool leaveOpen = false )
+        public static FlowScript FromStream(Stream stream, Encoding encoding = null, bool leaveOpen = false)
         {
-            return FromStream( stream, encoding, FormatVersion.Unknown, leaveOpen );
+            return FromStream(stream, encoding, FormatVersion.Unknown, leaveOpen);
         }
 
         /// <summary>
@@ -59,11 +59,11 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <param name="stream">Data stream.</param>
         /// <param name="version">Format version the loader should use.</param>
         /// <returns>A <see cref="FlowScript"/> instance.</returns>
-        public static FlowScript FromStream( Stream stream, Encoding encoding, FormatVersion version, bool leaveOpen )
+        public static FlowScript FromStream(Stream stream, Encoding encoding, FormatVersion version, bool leaveOpen)
         {
-            FlowScriptBinary binary = FlowScriptBinary.FromStream( stream, (BinaryFormatVersion)version, leaveOpen );
+            FlowScriptBinary binary = FlowScriptBinary.FromStream(stream, (BinaryFormatVersion)version, leaveOpen);
 
-            return FromBinary( binary, encoding );
+            return FromBinary(binary, encoding);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="binary">A <see cref="FlowScriptBinary"/> instance.</param>
         /// <returns>A <see cref="FlowScript"/> instance.</returns>
-        public static FlowScript FromBinary( FlowScriptBinary binary, Encoding encoding = null )
+        public static FlowScript FromBinary(FlowScriptBinary binary, Encoding encoding = null)
         {
             var instance = new FlowScript
             {
@@ -85,26 +85,26 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
             var stringBinaryIndexToListIndexMap = new Dictionary<short, short>();
             var strings = new List<string>();
 
-            if ( binary.StringSection != null )
+            if (binary.StringSection != null)
             {
                 short curStringBinaryIndex = 0;
                 var curStringBytes = new List<byte>();
 
-                for ( short i = 0; i < binary.StringSection.Count; i++ )
+                for (short i = 0; i < binary.StringSection.Count; i++)
                 {
                     // check for string terminator or end of string section
-                    if ( binary.StringSection[i] == 0 || i + 1 == binary.StringSection.Count )
+                    if (binary.StringSection[i] == 0 || i + 1 == binary.StringSection.Count)
                     {
-                        strings.Add( ShiftJISEncoding.Instance.GetString( curStringBytes.ToArray() ) );
-                        stringBinaryIndexToListIndexMap[curStringBinaryIndex] = ( short )( strings.Count - 1 );
+                        strings.Add(ShiftJISEncoding.Instance.GetString(curStringBytes.ToArray()));
+                        stringBinaryIndexToListIndexMap[curStringBinaryIndex] = (short)(strings.Count - 1);
 
                         // next string will start at the next byte if there are any left
-                        curStringBinaryIndex = ( short )( i + 1 );
+                        curStringBinaryIndex = (short)(i + 1);
                         curStringBytes = new List<byte>();
                     }
                     else
                     {
-                        curStringBytes.Add( binary.StringSection[ i ] );
+                        curStringBytes.Add(binary.StringSection[i]);
                     }
                 }
             }
@@ -114,43 +114,43 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
 
             // assign instructions
             // TODO: optimize this away later as i don't feel like it right now
-            if ( binary.TextSection != null )
+            if (binary.TextSection != null)
             {
                 int instructionIndex = 0;
                 int instructionBinaryIndex = 0;
 
-                while ( instructionBinaryIndex < binary.TextSection.Count )
-                {               
+                while (instructionBinaryIndex < binary.TextSection.Count)
+                {
                     // Convert each instruction
                     var binaryInstruction = binary.TextSection[instructionBinaryIndex];
 
                     Instruction instruction;
 
                     // Handle instructions we need to alter seperately
-                    if ( binaryInstruction.Opcode == Opcode.PUSHSTR )
+                    if (binaryInstruction.Opcode == Opcode.PUSHSTR)
                     {
                         // Update the string offset to reference the strings inside of the string list
-                        instruction = Instruction.PUSHSTR( strings[stringBinaryIndexToListIndexMap[binaryInstruction.OperandShort]] );
+                        instruction = Instruction.PUSHSTR(strings[stringBinaryIndexToListIndexMap[binaryInstruction.OperandShort]]);
                     }
-                    else if ( binaryInstruction.Opcode == Opcode.PUSHI )
+                    else if (binaryInstruction.Opcode == Opcode.PUSHI)
                     {
-                        instruction = Instruction.PUSHI( binary.TextSection[instructionBinaryIndex + 1].OperandInt );
+                        instruction = Instruction.PUSHI(binary.TextSection[instructionBinaryIndex + 1].OperandInt);
                     }
-                    else if ( binaryInstruction.Opcode == Opcode.PUSHF )
+                    else if (binaryInstruction.Opcode == Opcode.PUSHF)
                     {
-                        instruction = Instruction.PUSHF( binary.TextSection[instructionBinaryIndex + 1].OperandFloat );
+                        instruction = Instruction.PUSHF(binary.TextSection[instructionBinaryIndex + 1].OperandFloat);
                     }
                     else
                     {
-                        instruction = Instruction.FromBinaryInstruction( binaryInstruction );
+                        instruction = Instruction.FromBinaryInstruction(binaryInstruction);
                     }
 
                     // Add to list
-                    instructions.Add( instruction );
+                    instructions.Add(instruction);
                     instructionBinaryIndexToListIndexMap[instructionBinaryIndex] = instructionIndex++;
 
                     // Increment the instruction binary index by 2 if the current instruction takes up 2 instructions
-                    if ( instruction.UsesTwoBinaryInstructions )
+                    if (instruction.UsesTwoBinaryInstructions)
                         instructionBinaryIndex += 2;
                     else
                         instructionBinaryIndex += 1;
@@ -158,79 +158,79 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
             }
 
             // assign labels as the instruction index remap table has been built
-            var sortedProcedureLabels = binary.ProcedureLabelSection.OrderBy( x => x.InstructionIndex ).ToList();
+            var sortedProcedureLabels = binary.ProcedureLabelSection.OrderBy(x => x.InstructionIndex).ToList();
 
-            for ( int i = 0; i < binary.ProcedureLabelSection.Count; i++ )
+            for (int i = 0; i < binary.ProcedureLabelSection.Count; i++)
             {
-                var procedureLabel = binary.ProcedureLabelSection[ i ];
-                int procedureListStartIndex = instructionBinaryIndexToListIndexMap[ procedureLabel.InstructionIndex ];
-                int nextProcedureLabelIndex = sortedProcedureLabels.FindIndex( x => x.InstructionIndex == procedureLabel.InstructionIndex ) + 1;
+                var procedureLabel = binary.ProcedureLabelSection[i];
+                int procedureListStartIndex = instructionBinaryIndexToListIndexMap[procedureLabel.InstructionIndex];
+                int nextProcedureLabelIndex = sortedProcedureLabels.FindIndex(x => x.InstructionIndex == procedureLabel.InstructionIndex) + 1;
                 int procedureInstructionCount;
                 int procedureBinaryEndIndex; // inclusive
 
                 // Calculate the number of instructions in the procedure
                 bool isLastProcedure = nextProcedureLabelIndex == binary.ProcedureLabelSection.Count;
-                if ( isLastProcedure )
+                if (isLastProcedure)
                 {
-                    procedureInstructionCount = ( instructions.Count - procedureListStartIndex );
+                    procedureInstructionCount = (instructions.Count - procedureListStartIndex);
                     procedureBinaryEndIndex = binary.TextSection.Count - 1;
                 }
                 else
                 {
                     var nextProcedureLabel = binary.ProcedureLabelSection[nextProcedureLabelIndex];
-                    procedureInstructionCount = ( instructionBinaryIndexToListIndexMap[nextProcedureLabel.InstructionIndex] - procedureListStartIndex );
+                    procedureInstructionCount = (instructionBinaryIndexToListIndexMap[nextProcedureLabel.InstructionIndex] - procedureListStartIndex);
                     procedureBinaryEndIndex = nextProcedureLabel.InstructionIndex - 1;
                 }
 
                 // Copy the instruction range
-                var procedureInstructions = new List<Instruction>( procedureInstructionCount );
-                for ( int j = 0; j < procedureInstructionCount; j++ )
-                    procedureInstructions.Add( instructions[ procedureListStartIndex + j ] );
+                var procedureInstructions = new List<Instruction>(procedureInstructionCount);
+                for (int j = 0; j < procedureInstructionCount; j++)
+                    procedureInstructions.Add(instructions[procedureListStartIndex + j]);
 
                 // Create the new procedure representation
                 Procedure procedure;
 
-                if ( binary.JumpLabelSection != null )
+                if (binary.JumpLabelSection != null)
                 {
                     // Find jump labels within instruction range of procedure
                     var procedureBinaryJumpLabels = binary.JumpLabelSection
-                        .Where( x => x.InstructionIndex >= procedureLabel.InstructionIndex && x.InstructionIndex <= procedureBinaryEndIndex )
+                        .Where(x => x.InstructionIndex >= procedureLabel.InstructionIndex && x.InstructionIndex <= procedureBinaryEndIndex)
                         .ToList();
 
-                    if ( procedureBinaryJumpLabels.Count > 0 )
+                    if (procedureBinaryJumpLabels.Count > 0)
                     {
                         // Generate mapping between label name and the procedure-local index of the label
-                        var procedureJumpLabelNameToLocalIndexMap = new Dictionary<string, int>( procedureBinaryJumpLabels.Count );
+                        var procedureJumpLabelNameToLocalIndexMap = new Dictionary<string, int>(procedureBinaryJumpLabels.Count);
 
-                        for ( int k = 0; k < procedureBinaryJumpLabels.Count; k++ )
+                        for (int k = 0; k < procedureBinaryJumpLabels.Count; k++)
                             procedureJumpLabelNameToLocalIndexMap[procedureBinaryJumpLabels[k].Name] = k;
 
                         // Convert the labels to the new representation
-                        var procedureJumpLabels = new List<Label>( procedureBinaryJumpLabels.Count );
-                        foreach ( var procedureBinaryJumpLabel in procedureBinaryJumpLabels )
+                        var procedureJumpLabels = new List<Label>(procedureBinaryJumpLabels.Count);
+                        foreach (var procedureBinaryJumpLabel in procedureBinaryJumpLabels)
                         {
                             int globalInstructionListIndex = instructionBinaryIndexToListIndexMap[procedureBinaryJumpLabel.InstructionIndex];
                             int localInstructionListIndex = globalInstructionListIndex - procedureListStartIndex;
-                            procedureJumpLabels.Add( new Label( procedureBinaryJumpLabel.Name, localInstructionListIndex ) );
+                            procedureJumpLabels.Add(new Label(procedureBinaryJumpLabel.Name, localInstructionListIndex));
                         }
 
                         // Create the procedure
-                        procedure = new Procedure( procedureLabel.Name, procedureInstructions, procedureJumpLabels );
+                        procedure = new Procedure(procedureLabel.Name, procedureInstructions, procedureJumpLabels);
 
                         // Loop over the instructions and update the instructions that reference labels
                         // so that they refer to the proper procedure-local label index
-                        for ( int j = 0; j < procedure.Instructions.Count; j++ )
+                        for (int j = 0; j < procedure.Instructions.Count; j++)
                         {
                             var instruction = procedure.Instructions[j];
-                            if ( instruction.Opcode == Opcode.GOTO || instruction.Opcode == Opcode.IF )
+                            if (instruction.Opcode == Opcode.GOTO || instruction.Opcode == Opcode.IF)
                             {
                                 short globalIndex = instruction.Operand.Int16Value;
                                 var binaryLabel = binary.JumpLabelSection[globalIndex];
 
-                                short localIndex = ( short )procedureJumpLabelNameToLocalIndexMap[binaryLabel.Name];
-                                instruction.Operand.Int16Value = localIndex ;
+                                short localIndex = (short)procedureJumpLabelNameToLocalIndexMap[binaryLabel.Name];
+                                instruction.Operand.Int16Value = localIndex;
 
-                                Debug.Assert( procedure.Labels[localIndex].Name == binaryLabel.Name );
+                                Debug.Assert(procedure.Labels[localIndex].Name == binaryLabel.Name);
                             }
 
                             procedure.Instructions[j] = instruction;
@@ -239,22 +239,22 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
                     else
                     {
                         // Create the procedure
-                        procedure = new Procedure( procedureLabel.Name, procedureInstructions );
+                        procedure = new Procedure(procedureLabel.Name, procedureInstructions);
                     }
                 }
                 else
                 {
                     // Create the procedure
-                    procedure = new Procedure( procedureLabel.Name, procedureInstructions );
+                    procedure = new Procedure(procedureLabel.Name, procedureInstructions);
                 }
 
-                instance.mProcedures.Add( procedure );
+                instance.mProcedures.Add(procedure);
             }
 
             // assign message script
-            if ( binary.MessageScriptSection != null )
+            if (binary.MessageScriptSection != null)
             {
-                instance.mMessageScript = MessageScript.FromBinary( binary.MessageScriptSection, MessageScriptLanguage.FormatVersion.Detect, encoding );
+                instance.mMessageScript = MessageScript.FromBinary(binary.MessageScriptSection, MessageScriptLanguage.FormatVersion.Detect, encoding);
             }
 
             // strings have already been assigned previously, 
@@ -321,7 +321,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <summary>
         /// Initializes an empty flow script.
         /// </summary>
-        public FlowScript( FormatVersion version ) : this()
+        public FlowScript(FormatVersion version) : this()
         {
             mFormatVersion = version;
         }
@@ -332,8 +332,8 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="FlowScriptBinary"/> instance.</returns>
         public FlowScriptBinary ToBinary()
         {
-            var builder = new FlowScriptBinaryBuilder( (BinaryFormatVersion)mFormatVersion );
-            builder.SetUserId( mUserId );
+            var builder = new FlowScriptBinaryBuilder((BinaryFormatVersion)mFormatVersion);
+            builder.SetUserId(mUserId);
 
             // Skip the labels until after the instructions have been converted, as we need to fix up
             // the instruction indices
@@ -343,55 +343,55 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
             // TODO: optimize instructions usage
             var stringIndexToBinaryStringIndexMap = new Dictionary<short, short>();
             var strings = EnumerateInstructions()
-                .Where( x => x.Opcode == Opcode.PUSHSTR )
-                .Select( x => x.Operand.StringValue)
+                .Where(x => x.Opcode == Opcode.PUSHSTR)
+                .Select(x => x.Operand.StringValue)
                 .Distinct()
                 .ToList();
 
-            for ( short stringIndex = 0; stringIndex < strings.Count; stringIndex++ )
+            for (short stringIndex = 0; stringIndex < strings.Count; stringIndex++)
             {
-                builder.AddString( strings[stringIndex], out int binaryIndex );
-                stringIndexToBinaryStringIndexMap[stringIndex] = ( short )binaryIndex;
+                builder.AddString(strings[stringIndex], out int binaryIndex);
+                stringIndexToBinaryStringIndexMap[stringIndex] = (short)binaryIndex;
             }
 
             // Convert procedures
             int instructionBinaryIndex = 0;
             int nextBinaryLabelIndex = 0;
 
-            foreach ( var procedure in mProcedures )
+            foreach (var procedure in mProcedures)
             {
                 int procedureInstructionStartBinaryIndex = instructionBinaryIndex;
                 var procedureInstructionListIndexToBinaryIndexMap = new Dictionary<int, int>();
                 var procedureIndexRemap = new Dictionary<int, int>();
 
                 // Convert instructions in procedure
-                for ( int instructionIndex = 0; instructionIndex < procedure.Instructions.Count; instructionIndex++ )
+                for (int instructionIndex = 0; instructionIndex < procedure.Instructions.Count; instructionIndex++)
                 {
                     procedureInstructionListIndexToBinaryIndexMap[instructionIndex] = instructionBinaryIndex;
 
                     var instruction = procedure.Instructions[instructionIndex];
 
-                    if ( !instruction.UsesTwoBinaryInstructions )
+                    if (!instruction.UsesTwoBinaryInstructions)
                     {
                         var binaryInstruction = new BinaryInstruction
                         {
                             Opcode = instruction.Opcode
                         };
 
-                        if ( instruction.Opcode == Opcode.PUSHSTR )
+                        if (instruction.Opcode == Opcode.PUSHSTR)
                         {
                             // Handle PUSHSTR seperately due to difference in string index usage
-                            short stringIndex = ( short )strings.IndexOf( instruction.Operand.StringValue);
-                            if ( stringIndex == -1 )
-                                throw new InvalidDataException( "String could not be found??" );
+                            short stringIndex = (short)strings.IndexOf(instruction.Operand.StringValue);
+                            if (stringIndex == -1)
+                                throw new InvalidDataException("String could not be found??");
 
                             binaryInstruction.OperandShort = stringIndexToBinaryStringIndexMap[stringIndex];
                         }
-                        else if ( instruction.Opcode == Opcode.GOTO || instruction.Opcode == Opcode.IF )
+                        else if (instruction.Opcode == Opcode.GOTO || instruction.Opcode == Opcode.IF)
                         {
                             // Convert procedure-local label index to global label index
                             int oldIndex = instruction.Operand.Int16Value;
-                            if ( !procedureIndexRemap.ContainsKey( oldIndex ))
+                            if (!procedureIndexRemap.ContainsKey(oldIndex))
                             {
                                 procedureIndexRemap[oldIndex] = nextBinaryLabelIndex++;
                             }
@@ -401,11 +401,11 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
                         else
                         {
                             // Handle regular instruction
-                            if ( instruction.Operand != null )
+                            if (instruction.Operand != null)
                                 binaryInstruction.OperandShort = instruction.Operand.Int16Value;
                         }
 
-                        builder.AddInstruction( binaryInstruction );
+                        builder.AddInstruction(binaryInstruction);
                         instructionBinaryIndex += 1;
                     }
                     else
@@ -414,7 +414,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
                         var binaryInstruction = new BinaryInstruction { Opcode = instruction.Opcode };
                         var binaryInstruction2 = new BinaryInstruction();
 
-                        switch ( instruction.Operand.Kind )
+                        switch (instruction.Operand.Kind)
                         {
                             case Operand.ValueKind.Int32:
                                 binaryInstruction2.OperandInt = instruction.Operand.Int32Value;
@@ -426,26 +426,26 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
                                 throw new InvalidOperationException();
                         }
 
-                        builder.AddInstruction( binaryInstruction );
-                        builder.AddInstruction( binaryInstruction2 );
+                        builder.AddInstruction(binaryInstruction);
+                        builder.AddInstruction(binaryInstruction2);
                         instructionBinaryIndex += 2;
                     }
                 }
 
                 // Convert labels in procedure after the instructions to remap the instruction indices
-                foreach ( var key in procedureIndexRemap.Keys )
+                foreach (var key in procedureIndexRemap.Keys)
                 {
                     var label = procedure.Labels[key];
-                    builder.AddJumpLabel( new BinaryLabel { InstructionIndex = procedureInstructionListIndexToBinaryIndexMap[label.InstructionIndex], Name = label.Name, Reserved = 0 } );
+                    builder.AddJumpLabel(new BinaryLabel { InstructionIndex = procedureInstructionListIndexToBinaryIndexMap[label.InstructionIndex], Name = label.Name, Reserved = 0 });
                 }
 
                 // Add procedure to builder
-                builder.AddProcedureLabel( new BinaryLabel { InstructionIndex = procedureInstructionStartBinaryIndex, Name = procedure.Name, Reserved = 0 } );
+                builder.AddProcedureLabel(new BinaryLabel { InstructionIndex = procedureInstructionStartBinaryIndex, Name = procedure.Name, Reserved = 0 });
             }
 
             // Convert message script
-            if ( mMessageScript != null )
-                builder.SetMessageScriptSection( mMessageScript );
+            if (mMessageScript != null)
+                builder.SetMessageScriptSection(mMessageScript);
 
             return builder.Build();
         }
@@ -454,16 +454,16 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// Serializes the <see cref="FlowScript"/> instance to the specified file.
         /// </summary>
         /// <param name="path">The output file path.</param>
-        public void ToFile( string path )
+        public void ToFile(string path)
         {
-            if ( path == null )
-                throw new ArgumentNullException( nameof( path ) );
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
 
-            if ( string.IsNullOrEmpty( path ) )
-                throw new ArgumentException( "Value cannot be null or empty.", nameof( path ) );
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Value cannot be null or empty.", nameof(path));
 
-            using ( var stream = FileUtils.Create( path ) )
-                ToStream( stream );
+            using (var stream = FileUtils.Create(path))
+                ToStream(stream);
         }
 
         /// <summary>
@@ -473,7 +473,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         public Stream ToStream()
         {
             var stream = new MemoryStream();
-            ToStream( stream, true );
+            ToStream(stream, true);
             return stream;
         }
 
@@ -482,16 +482,16 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="stream">The stream to serialize to.</param>
         /// <param name="leaveOpen">Indicates whether the specified stream should be left open.</param>
-        public void ToStream( Stream stream, bool leaveOpen = false )
+        public void ToStream(Stream stream, bool leaveOpen = false)
         {
             var binary = ToBinary();
-            binary.ToStream( stream, leaveOpen );
+            binary.ToStream(stream, leaveOpen);
         }
 
         /// <summary>
         /// Enumerates over all of the instructions in the script.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Instruction> EnumerateInstructions() => Procedures.SelectMany( x => x.Instructions );
+        public IEnumerable<Instruction> EnumerateInstructions() => Procedures.SelectMany(x => x.Instructions);
     }
 }

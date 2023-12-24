@@ -12,7 +12,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
             Body = new List<Statement>();
         }
 
-        protected FlowScriptSwitchLabel( params Statement[] statements )
+        protected FlowScriptSwitchLabel(params Statement[] statements)
         {
             Body = statements.ToList();
         }

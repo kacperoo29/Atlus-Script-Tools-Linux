@@ -4,12 +4,12 @@
     {
         public int Precedence => 8;
 
-        public GreaterThanOperator() : base( ValueKind.Bool )
+        public GreaterThanOperator() : base(ValueKind.Bool)
         {
         }
 
-        public GreaterThanOperator( Expression left, Expression right )
-            : base( ValueKind.Bool, left, right )
+        public GreaterThanOperator(Expression left, Expression right)
+            : base(ValueKind.Bool, left, right)
         {
 
         }

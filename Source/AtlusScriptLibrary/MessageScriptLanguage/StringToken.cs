@@ -14,7 +14,7 @@
         /// Constructs a new message script value token with a value value.
         /// </summary>
         /// <param name="value">The value value of the value token/</param>
-        public StringToken( string value )
+        public StringToken(string value)
         {
             Value = value;
         }

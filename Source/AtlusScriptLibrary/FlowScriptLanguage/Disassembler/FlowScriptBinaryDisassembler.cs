@@ -22,8 +22,8 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Disassembler
         {
             get
             {
-                if ( mScript == null || mScript.TextSection == null || mScript.TextSection.Count == 0 )
-                    throw new InvalidOperationException( "Invalid state" );
+                if (mScript == null || mScript.TextSection == null || mScript.TextSection.Count == 0)
+                    throw new InvalidOperationException("Invalid state");
 
                 return mScript.TextSection[mInstructionIndex];
             }
@@ -33,81 +33,81 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Disassembler
         {
             get
             {
-                if ( mScript == null || mScript.TextSection == null || mScript.TextSection.Count == 0 )
+                if (mScript == null || mScript.TextSection == null || mScript.TextSection.Count == 0)
                     return null;
 
-                if ( ( mInstructionIndex + 1 ) < ( mScript.TextSection.Count - 1 ) )
+                if ((mInstructionIndex + 1) < (mScript.TextSection.Count - 1))
                     return mScript.TextSection[mInstructionIndex + 1];
                 return null;
             }
         }
 
-        public FlowScriptBinaryDisassembler( TextWriter writer )
+        public FlowScriptBinaryDisassembler(TextWriter writer)
         {
             mWriter = writer;
         }
 
-        public FlowScriptBinaryDisassembler( string outpath )
+        public FlowScriptBinaryDisassembler(string outpath)
         {
-            mWriter = new FileTextWriter( outpath );
+            mWriter = new FileTextWriter(outpath);
         }
 
-        public FlowScriptBinaryDisassembler( Stream stream )
+        public FlowScriptBinaryDisassembler(Stream stream)
         {
-            mWriter = new StreamWriter( stream );
+            mWriter = new StreamWriter(stream);
         }
 
-        public void Disassemble( FlowScriptBinary script )
+        public void Disassemble(FlowScriptBinary script)
         {
-            mScript = script ?? throw new ArgumentNullException( nameof( script ) );
+            mScript = script ?? throw new ArgumentNullException(nameof(script));
             mInstructionIndex = 0;
 
             WriteDisassembly();
         }
 
-        private void WriteCommentLine( string text )
+        private void WriteCommentLine(string text)
         {
-            mWriter.WriteLine( "# " + text );
+            mWriter.WriteLine("# " + text);
         }
 
         private void WriteDisassembly()
         {
             WriteHeader();
 
-            if ( mScript.TextSection != null )
+            if (mScript.TextSection != null)
                 WriteTextDisassembly();
 
-            if ( mScript.MessageScriptSection != null )
+            if (mScript.MessageScriptSection != null)
                 WriteMessageScriptDisassembly();
         }
 
         private void WriteHeader()
         {
-            WriteCommentLine( mHeaderString );
+            WriteCommentLine(mHeaderString);
             mWriter.WriteLine();
         }
 
         private void WriteTextDisassembly()
         {
-            mWriter.WriteLine( ".text" );
+            mWriter.WriteLine(".text");
 
-            while ( mInstructionIndex < mScript.TextSection.Count )
+            while (mInstructionIndex < mScript.TextSection.Count)
             {
                 // Check if there is a possible jump label at the current index
-                if ( mScript.JumpLabelSection != null )
+                if (mScript.JumpLabelSection != null)
                 {
-                    foreach ( var jump in mScript.JumpLabelSection.Where( x => x.InstructionIndex == mInstructionIndex ) )
+                    foreach (var jump in mScript.JumpLabelSection.Where(x => x.InstructionIndex == mInstructionIndex))
                     {
-                        mWriter.WriteLine( $"{jump.Name}:" );
+                        mWriter.WriteLine($"{jump.Name}:");
                     }
                 }
 
-                if ( CurrentInstruction.Opcode == Opcode.PROC )
+                if (CurrentInstruction.Opcode == Opcode.PROC)
                     mWriter.WriteLine();
 
                 WriteInstructionDisassembly();
 
-                if ( OpcodeUsesExtendedOperand( CurrentInstruction.Opcode ) )
+                if (OpcodeUsesExtendedOperand(CurrentInstruction.Opcode))
                 {
                     mInstructionIndex += 2;
                 }
@@ -120,25 +120,25 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Disassembler
             mWriter.WriteLine();
         }
 
-        private bool OpcodeUsesExtendedOperand( Opcode opcode )
+        private bool OpcodeUsesExtendedOperand(Opcode opcode)
         {
             return opcode == Opcode.PUSHI || opcode == Opcode.PUSHF;
         }
 
         private void WriteInstructionDisassembly()
         {
-            mWriter.Write( $"# {mInstructionIndex:D4}:{mInstructionIndex:X4} # " );
+            mWriter.Write($"# {mInstructionIndex:D4}:{mInstructionIndex:X4} # ");
 
-            switch ( CurrentInstruction.Opcode )
+            switch (CurrentInstruction.Opcode)
             {
                 // extended int operand
                 case Opcode.PUSHI:
-                    mWriter.Write( DisassembleInstructionWithIntOperand( CurrentInstruction, NextInstruction.Value ) );
+                    mWriter.Write(DisassembleInstructionWithIntOperand(CurrentInstruction, NextInstruction.Value));
                     break;
 
                 // extended float operand
                 case Opcode.PUSHF:
-                    mWriter.Write( DisassembleInstructionWithFloatOperand( CurrentInstruction, NextInstruction.Value ) );
+                    mWriter.Write(DisassembleInstructionWithFloatOperand(CurrentInstruction, NextInstruction.Value));
                     break;
 
                 // short operand
@@ -152,33 +152,33 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Disassembler
                 case Opcode.PUSHLFX:
                 case Opcode.POPLIX:
                 case Opcode.POPLFX:
-                    mWriter.Write( DisassembleInstructionWithShortOperand( CurrentInstruction ) );
+                    mWriter.Write(DisassembleInstructionWithShortOperand(CurrentInstruction));
                     break;
 
                 // string opcodes
                 case Opcode.PUSHSTR:
-                    mWriter.Write( DisassembleInstructionWithStringReferenceOperand( CurrentInstruction, mScript.StringSection ) );
+                    mWriter.Write(DisassembleInstructionWithStringReferenceOperand(CurrentInstruction, mScript.StringSection));
                     break;
 
                 // branch procedure opcodes
                 case Opcode.PROC:
-                    mWriter.Write( DisassembleInstructionWithLabelReferenceOperand( CurrentInstruction, mScript.ProcedureLabelSection ) );
+                    mWriter.Write(DisassembleInstructionWithLabelReferenceOperand(CurrentInstruction, mScript.ProcedureLabelSection));
                     break;
 
                 case Opcode.JUMP:
                 case Opcode.CALL:
-                    mWriter.Write( DisassembleInstructionWithLabelReferenceOperand( CurrentInstruction, mScript.ProcedureLabelSection ) );
+                    mWriter.Write(DisassembleInstructionWithLabelReferenceOperand(CurrentInstruction, mScript.ProcedureLabelSection));
                     break;
 
                 // branch jump opcodes                           
                 case Opcode.GOTO:
                 case Opcode.IF:
-                    mWriter.Write( DisassembleInstructionWithLabelReferenceOperand( CurrentInstruction, mScript.JumpLabelSection ) );
+                    mWriter.Write(DisassembleInstructionWithLabelReferenceOperand(CurrentInstruction, mScript.JumpLabelSection));
                     break;
 
                 // branch communicate opcode
                 case Opcode.COMM:
-                    mWriter.Write( DisassembleInstructionWithCommReferenceOperand( CurrentInstruction ) );
+                    mWriter.Write(DisassembleInstructionWithCommReferenceOperand(CurrentInstruction));
                     break;
 
                 // No operands
@@ -197,15 +197,15 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Disassembler
                 case Opcode.L:
                 case Opcode.SE:
                 case Opcode.LE:
-                    mWriter.Write( DisassembleInstructionWithNoOperand( CurrentInstruction ) );
+                    mWriter.Write(DisassembleInstructionWithNoOperand(CurrentInstruction));
                     break;
 
                 case Opcode.END:
-                    mWriter.Write( DisassembleInstructionWithNoOperand( CurrentInstruction ) );
+                    mWriter.Write(DisassembleInstructionWithNoOperand(CurrentInstruction));
                     break;
 
                 default:
-                    throw new InvalidOperationException( $"Unknown opcode {CurrentInstruction.Opcode}" );
+                    throw new InvalidOperationException($"Unknown opcode {CurrentInstruction.Opcode}");
             }
 
             mWriter.WriteLine();
@@ -213,76 +213,76 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Disassembler
 
         private void WriteMessageScriptDisassembly()
         {
-            mWriter.WriteLine( ".msg" );
+            mWriter.WriteLine(".msg");
 
-            using ( var messageScriptDecompiler = new MessageScriptDecompiler( mWriter ) )
+            using (var messageScriptDecompiler = new MessageScriptDecompiler(mWriter))
             {
-                messageScriptDecompiler.Decompile( MessageScript.FromBinary( mScript.MessageScriptSection ) );
+                messageScriptDecompiler.Decompile(MessageScript.FromBinary(mScript.MessageScriptSection));
             }
         }
 
-        public static string DisassembleInstructionWithNoOperand( BinaryInstruction instruction )
+        public static string DisassembleInstructionWithNoOperand(BinaryInstruction instruction)
         {
-            if ( instruction.OperandShort != 0 )
+            if (instruction.OperandShort != 0)
             {
-                throw new ArgumentOutOfRangeException( nameof( instruction.OperandShort ), $"{instruction.Opcode} should not have any operands" );
+                throw new ArgumentOutOfRangeException(nameof(instruction.OperandShort), $"{instruction.Opcode} should not have any operands");
             }
 
             return $"{instruction.Opcode}";
         }
 
-        public static string DisassembleInstructionWithIntOperand( BinaryInstruction instruction, BinaryInstruction operand )
+        public static string DisassembleInstructionWithIntOperand(BinaryInstruction instruction, BinaryInstruction operand)
         {
             return $"{instruction.Opcode}\t{operand.OperandInt:X8}";
         }
 
-        public static string DisassembleInstructionWithFloatOperand( BinaryInstruction instruction, BinaryInstruction operand )
+        public static string DisassembleInstructionWithFloatOperand(BinaryInstruction instruction, BinaryInstruction operand)
         {
-            return $"{instruction.Opcode}\t\t{operand.OperandFloat.ToString( "0.00#####", CultureInfo.InvariantCulture )}f";
+            return $"{instruction.Opcode}\t\t{operand.OperandFloat.ToString("0.00#####", CultureInfo.InvariantCulture)}f";
         }
 
-        public static string DisassembleInstructionWithShortOperand( BinaryInstruction instruction )
+        public static string DisassembleInstructionWithShortOperand(BinaryInstruction instruction)
         {
             return $"{instruction.Opcode}\t{instruction.OperandShort:X4}";
         }
 
-        public static string DisassembleInstructionWithStringReferenceOperand( BinaryInstruction instruction, IList<byte> stringTable )
+        public static string DisassembleInstructionWithStringReferenceOperand(BinaryInstruction instruction, IList<byte> stringTable)
         {
             string value = string.Empty;
-            for ( int i = instruction.OperandShort; i < stringTable.Count; i++ )
+            for (int i = instruction.OperandShort; i < stringTable.Count; i++)
             {
-                if ( stringTable[i] == 0 )
+                if (stringTable[i] == 0)
                     break;
 
-                value += ( char )stringTable[i];
+                value += (char)stringTable[i];
             }
 
             return $"{instruction.Opcode}\t\"{value}\"";
         }
 
-        public static string DisassembleInstructionWithLabelReferenceOperand( BinaryInstruction instruction, IList<BinaryLabel> labels )
+        public static string DisassembleInstructionWithLabelReferenceOperand(BinaryInstruction instruction, IList<BinaryLabel> labels)
         {
-            if ( instruction.OperandShort >= labels.Count )
+            if (instruction.OperandShort >= labels.Count)
             {
-                throw new ArgumentOutOfRangeException( nameof( instruction.OperandShort ), $"No label for label reference id {instruction.OperandShort} present in {nameof( labels )}" );
+                throw new ArgumentOutOfRangeException(nameof(instruction.OperandShort), $"No label for label reference id {instruction.OperandShort} present in {nameof(labels)}");
             }
 
             return $"{instruction.Opcode}\t\t{labels[instruction.OperandShort].Name}";
         }
 
-        public static string DisassembleInstructionWithCommReferenceOperand( BinaryInstruction instruction )
+        public static string DisassembleInstructionWithCommReferenceOperand(BinaryInstruction instruction)
         {
             return $"{instruction.Opcode}\t\t{instruction.OperandShort:X4}";
         }
 
         public void Dispose()
         {
-            Dispose( true );
+            Dispose(true);
         }
 
-        protected virtual void Dispose( bool disposing )
+        protected virtual void Dispose(bool disposing)
         {
-            if ( mDisposed )
+            if (mDisposed)
                 return;
 
             mWriter.Dispose();

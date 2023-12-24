@@ -69,7 +69,7 @@ namespace AtlusScriptLibrary.Common.IO
             mEncoding = encoding;
             mPosQueue = new Queue<long>();
             Endianness = endianness;
-            mByteBuffer = new List<byte>( 128 );
+            mByteBuffer = new List<byte>(128);
         }
 
         public void Seek(long offset, SeekOrigin origin)
@@ -355,7 +355,7 @@ namespace AtlusScriptLibrary.Common.IO
                     throw new ArgumentException("Unknown string format", nameof(format));
             }
 
-            return mEncoding.GetString( mByteBuffer.ToArray() );
+            return mEncoding.GetString(mByteBuffer.ToArray());
         }
 
         public string[] ReadStrings(int count, StringBinaryFormat format, int fixedLength = -1)

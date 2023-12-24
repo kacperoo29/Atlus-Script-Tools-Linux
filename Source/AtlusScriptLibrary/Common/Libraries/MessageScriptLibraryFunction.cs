@@ -13,7 +13,7 @@ namespace AtlusScriptLibrary.Common.Libraries
 
         public string Description { get; set; }
 
-        [JsonConverter( typeof( CustomStringEnumConverter ) )]
+        [JsonConverter(typeof(CustomStringEnumConverter))]
         public MessageScriptLibraryFunctionSemantic Semantic { get; set; }
 
         public List<MessageScriptLibraryParameter> Parameters { get; set; }

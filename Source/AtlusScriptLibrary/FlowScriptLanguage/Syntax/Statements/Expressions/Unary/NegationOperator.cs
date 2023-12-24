@@ -7,7 +7,7 @@
 
         }
 
-        public NegationOperator( Expression operand ) : base( operand )
+        public NegationOperator(Expression operand) : base(operand)
         {
 
         }

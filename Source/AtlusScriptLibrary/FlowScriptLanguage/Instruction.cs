@@ -29,7 +29,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// Constructs a new instruction with a specified opcode with no operand.
         /// </summary>
         /// <param name="opcode">The opcode of the instruction.</param>
-        private Instruction( Opcode opcode )
+        private Instruction(Opcode opcode)
         {
             Opcode = opcode;
             Operand = null;
@@ -39,7 +39,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// Constructs a new instruction with a specified opcode with no operand.
         /// </summary>
         /// <param name="opcode">The opcode of the instruction.</param>
-        private Instruction( Opcode opcode, Operand operand )
+        private Instruction(Opcode opcode, Operand operand)
         {
             Opcode = opcode;
             Operand = operand;
@@ -50,10 +50,10 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="opcode">The opcode of the instruction.</param>
         /// <param name="value">The operand value.</param>
-        private Instruction( Opcode opcode, short value )
+        private Instruction(Opcode opcode, short value)
         {
             Opcode = opcode;
-            Operand = new Operand( value );
+            Operand = new Operand(value);
         }
 
         /// <summary>
@@ -61,10 +61,10 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="opcode">The opcode of the instruction.</param>
         /// <param name="value">The operand value.</param>
-        private Instruction( Opcode opcode, int value )
+        private Instruction(Opcode opcode, int value)
         {
             Opcode = opcode;
-            Operand = new Operand( value );
+            Operand = new Operand(value);
         }
 
         /// <summary>
@@ -72,10 +72,10 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="opcode">The opcode of the instruction.</param>
         /// <param name="value">The operand value.</param>
-        private Instruction( Opcode opcode, float value )
+        private Instruction(Opcode opcode, float value)
         {
             Opcode = opcode;
-            Operand = new Operand( value );
+            Operand = new Operand(value);
         }
 
         /// <summary>
@@ -83,10 +83,10 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="opcode">The opcode of the instruction.</param>
         /// <param name="value">The operand value.</param>
-        private Instruction( Opcode opcode, string value )
+        private Instruction(Opcode opcode, string value)
         {
             Opcode = opcode;
-            Operand = new Operand( value );
+            Operand = new Operand(value);
         }
 
         /// <summary>
@@ -95,45 +95,45 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="binary">The binary instruction.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction FromBinaryInstruction( BinaryInstruction binary )
+        public static Instruction FromBinaryInstruction(BinaryInstruction binary)
         {
-            switch ( binary.Opcode )
+            switch (binary.Opcode)
             {
                 case Opcode.PUSHIX:
-                    return PUSHIX( binary.OperandShort );
+                    return PUSHIX(binary.OperandShort);
 
                 case Opcode.PUSHIF:
-                    return PUSHIF( binary.OperandShort );
+                    return PUSHIF(binary.OperandShort);
 
                 case Opcode.PUSHREG:
                     return PUSHREG();
 
                 case Opcode.POPIX:
-                    return POPIX( binary.OperandShort );
+                    return POPIX(binary.OperandShort);
 
                 case Opcode.POPFX:
-                    return POPFX( binary.OperandShort );
+                    return POPFX(binary.OperandShort);
 
                 case Opcode.PROC:
-                    return PROC( binary.OperandShort );
+                    return PROC(binary.OperandShort);
 
                 case Opcode.COMM:
-                    return COMM( binary.OperandShort );
+                    return COMM(binary.OperandShort);
 
                 case Opcode.END:
                     return END();
 
                 case Opcode.JUMP:
-                    return JUMP( binary.OperandShort );
+                    return JUMP(binary.OperandShort);
 
                 case Opcode.CALL:
-                    return CALL( binary.OperandShort );
+                    return CALL(binary.OperandShort);
 
                 case Opcode.RUN:
                     return RUN();
 
                 case Opcode.GOTO:
-                    return GOTO( binary.OperandShort );
+                    return GOTO(binary.OperandShort);
 
                 case Opcode.ADD:
                     return ADD();
@@ -178,25 +178,25 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
                     return LE();
 
                 case Opcode.IF:
-                    return IF( binary.OperandShort );
+                    return IF(binary.OperandShort);
 
                 case Opcode.PUSHIS:
-                    return PUSHIS( binary.OperandShort );
+                    return PUSHIS(binary.OperandShort);
 
                 case Opcode.PUSHLIX:
-                    return PUSHLIX( binary.OperandShort );
+                    return PUSHLIX(binary.OperandShort);
 
                 case Opcode.PUSHLFX:
-                    return PUSHLFX( binary.OperandShort );
+                    return PUSHLFX(binary.OperandShort);
 
                 case Opcode.POPLIX:
-                    return POPLIX( binary.OperandShort );
+                    return POPLIX(binary.OperandShort);
 
                 case Opcode.POPLFX:
-                    return POPLFX( binary.OperandShort );
+                    return POPLFX(binary.OperandShort);
 
                 default:
-                    throw new Exception( "Opcode not supported" );
+                    throw new Exception("Opcode not supported");
             }
         }
 
@@ -205,9 +205,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction PUSHI( int value )
+        public static Instruction PUSHI(int value)
         {
-            return new Instruction( Opcode.PUSHI, value );
+            return new Instruction(Opcode.PUSHI, value);
         }
 
         /// <summary>
@@ -215,9 +215,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction PUSHF( float value )
+        public static Instruction PUSHF(float value)
         {
-            return new Instruction( Opcode.PUSHF, value );
+            return new Instruction(Opcode.PUSHF, value);
         }
 
         /// <summary>
@@ -225,9 +225,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction PUSHIX( short globalIntVariableIndex )
+        public static Instruction PUSHIX(short globalIntVariableIndex)
         {
-            return new Instruction( Opcode.PUSHIX, globalIntVariableIndex );
+            return new Instruction(Opcode.PUSHIX, globalIntVariableIndex);
         }
 
         /// <summary>
@@ -235,9 +235,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction PUSHIF( short globalFloatVariableIndex )
+        public static Instruction PUSHIF(short globalFloatVariableIndex)
         {
-            return new Instruction( Opcode.PUSHIF, globalFloatVariableIndex );
+            return new Instruction(Opcode.PUSHIF, globalFloatVariableIndex);
         }
 
         /// <summary>
@@ -246,7 +246,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction PUSHREG()
         {
-            return new Instruction( Opcode.PUSHREG );
+            return new Instruction(Opcode.PUSHREG);
         }
 
         /// <summary>
@@ -254,9 +254,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction POPIX( short globalIntVariableIndex )
+        public static Instruction POPIX(short globalIntVariableIndex)
         {
-            return new Instruction( Opcode.POPIX, globalIntVariableIndex );
+            return new Instruction(Opcode.POPIX, globalIntVariableIndex);
         }
 
         /// <summary>
@@ -264,9 +264,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction POPFX( short globalFloatVariableIndex )
+        public static Instruction POPFX(short globalFloatVariableIndex)
         {
-            return new Instruction( Opcode.POPFX, globalFloatVariableIndex );
+            return new Instruction(Opcode.POPFX, globalFloatVariableIndex);
         }
 
         /// <summary>
@@ -274,9 +274,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction PROC( short procedureIndex )
+        public static Instruction PROC(short procedureIndex)
         {
-            return new Instruction( Opcode.PROC, procedureIndex );
+            return new Instruction(Opcode.PROC, procedureIndex);
         }
 
         /// <summary>
@@ -284,9 +284,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction COMM( short functionId )
+        public static Instruction COMM(short functionId)
         {
-            return new Instruction( Opcode.COMM, functionId );
+            return new Instruction(Opcode.COMM, functionId);
         }
 
         /// <summary>
@@ -296,7 +296,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction END()
         {
-            return new Instruction( Opcode.END );
+            return new Instruction(Opcode.END);
         }
 
         /// <summary>
@@ -304,9 +304,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction JUMP( short procedureLabelIndex )
+        public static Instruction JUMP(short procedureLabelIndex)
         {
-            return new Instruction( Opcode.JUMP, procedureLabelIndex );
+            return new Instruction(Opcode.JUMP, procedureLabelIndex);
         }
 
         /// <summary>
@@ -314,9 +314,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction CALL( short procedureLabelIndex )
+        public static Instruction CALL(short procedureLabelIndex)
         {
-            return new Instruction( Opcode.CALL, procedureLabelIndex );
+            return new Instruction(Opcode.CALL, procedureLabelIndex);
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction RUN()
         {
-            return new Instruction( Opcode.RUN );
+            return new Instruction(Opcode.RUN);
         }
 
         /// <summary>
@@ -334,9 +334,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction GOTO( short jumpLabelIndex )
+        public static Instruction GOTO(short jumpLabelIndex)
         {
-            return new Instruction( Opcode.GOTO, jumpLabelIndex );
+            return new Instruction(Opcode.GOTO, jumpLabelIndex);
         }
 
         /// <summary>
@@ -346,7 +346,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction ADD()
         {
-            return new Instruction( Opcode.ADD );
+            return new Instruction(Opcode.ADD);
         }
 
         /// <summary>
@@ -356,7 +356,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction SUB()
         {
-            return new Instruction( Opcode.SUB );
+            return new Instruction(Opcode.SUB);
         }
 
         /// <summary>
@@ -366,7 +366,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction MUL()
         {
-            return new Instruction( Opcode.MUL );
+            return new Instruction(Opcode.MUL);
         }
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction DIV()
         {
-            return new Instruction( Opcode.DIV );
+            return new Instruction(Opcode.DIV);
         }
 
         /// <summary>
@@ -386,7 +386,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction MINUS()
         {
-            return new Instruction( Opcode.MINUS );
+            return new Instruction(Opcode.MINUS);
         }
 
         /// <summary>
@@ -396,7 +396,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction NOT()
         {
-            return new Instruction( Opcode.NOT );
+            return new Instruction(Opcode.NOT);
         }
 
         /// <summary>
@@ -406,7 +406,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction OR()
         {
-            return new Instruction( Opcode.OR );
+            return new Instruction(Opcode.OR);
         }
 
         /// <summary>
@@ -416,7 +416,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction AND()
         {
-            return new Instruction( Opcode.AND );
+            return new Instruction(Opcode.AND);
         }
 
         /// <summary>
@@ -426,7 +426,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction EQ()
         {
-            return new Instruction( Opcode.EQ );
+            return new Instruction(Opcode.EQ);
         }
 
         /// <summary>
@@ -436,7 +436,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction NEQ()
         {
-            return new Instruction( Opcode.NEQ );
+            return new Instruction(Opcode.NEQ);
         }
 
         /// <summary>
@@ -446,7 +446,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction S()
         {
-            return new Instruction( Opcode.S );
+            return new Instruction(Opcode.S);
         }
 
         /// <summary>
@@ -456,7 +456,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction L()
         {
-            return new Instruction( Opcode.L );
+            return new Instruction(Opcode.L);
         }
 
         /// <summary>
@@ -466,7 +466,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction SE()
         {
-            return new Instruction( Opcode.SE );
+            return new Instruction(Opcode.SE);
         }
 
         /// <summary>
@@ -476,7 +476,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// <returns>A <see cref="Instruction"/> instance.</returns>
         public static Instruction LE()
         {
-            return new Instruction( Opcode.LE );
+            return new Instruction(Opcode.LE);
         }
 
         /// <summary>
@@ -484,9 +484,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction IF( short jumpLabelIndexIfFalse )
+        public static Instruction IF(short jumpLabelIndexIfFalse)
         {
-            return new Instruction( Opcode.IF, jumpLabelIndexIfFalse );
+            return new Instruction(Opcode.IF, jumpLabelIndexIfFalse);
         }
 
         /// <summary>
@@ -494,9 +494,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction PUSHIS( short value )
+        public static Instruction PUSHIS(short value)
         {
-            return new Instruction( Opcode.PUSHIS, value );
+            return new Instruction(Opcode.PUSHIS, value);
         }
 
         /// <summary>
@@ -504,9 +504,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction PUSHLIX( short localIntVariableIndex )
+        public static Instruction PUSHLIX(short localIntVariableIndex)
         {
-            return new Instruction( Opcode.PUSHLIX, localIntVariableIndex );
+            return new Instruction(Opcode.PUSHLIX, localIntVariableIndex);
         }
 
         /// <summary>
@@ -514,9 +514,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction PUSHLFX( short localFloatVariableIndex )
+        public static Instruction PUSHLFX(short localFloatVariableIndex)
         {
-            return new Instruction( Opcode.PUSHLFX, localFloatVariableIndex );
+            return new Instruction(Opcode.PUSHLFX, localFloatVariableIndex);
         }
 
         /// <summary>
@@ -524,9 +524,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction POPLIX( short localIntVariableIndex )
+        public static Instruction POPLIX(short localIntVariableIndex)
         {
-            return new Instruction( Opcode.POPLIX, localIntVariableIndex );
+            return new Instruction(Opcode.POPLIX, localIntVariableIndex);
         }
 
         /// <summary>
@@ -534,9 +534,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction POPLFX( short localFloatVariableIndex )
+        public static Instruction POPLFX(short localFloatVariableIndex)
         {
-            return new Instruction( Opcode.POPLFX, localFloatVariableIndex );
+            return new Instruction(Opcode.POPLFX, localFloatVariableIndex);
         }
 
         /// <summary>
@@ -544,9 +544,9 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
         /// </summary>
         /// <param name="value">The operand value.</param>
         /// <returns>A <see cref="Instruction"/> instance.</returns>
-        public static Instruction PUSHSTR( string value )
+        public static Instruction PUSHSTR(string value)
         {
-            return new Instruction( Opcode.PUSHSTR, value );
+            return new Instruction(Opcode.PUSHSTR, value);
         }
 
         public override string ToString()
@@ -561,7 +561,7 @@ namespace AtlusScriptLibrary.FlowScriptLanguage
 
         public Instruction Clone()
         {
-            return new Instruction( Opcode, Operand?.Clone() );
+            return new Instruction(Opcode, Operand?.Clone());
         }
     }
 }

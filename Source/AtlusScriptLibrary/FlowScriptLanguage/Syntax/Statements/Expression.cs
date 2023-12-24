@@ -9,28 +9,28 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.Syntax
     {
         public ValueKind ExpressionValueKind { get; set; }
 
-        protected Expression( ValueKind kind )
+        protected Expression(ValueKind kind)
         {
             ExpressionValueKind = kind;
         }
 
-        public static Expression FromText( string source )
+        public static Expression FromText(string source)
         {
-            var lexer = new FlowScriptLexer( new AntlrInputStream( source ) );
-            var tokenStream = new CommonTokenStream( lexer );
+            var lexer = new FlowScriptLexer(new AntlrInputStream(source));
+            var tokenStream = new CommonTokenStream(lexer);
 
             // parse expression
-            var parser = new FlowScriptParser( tokenStream );
+            var parser = new FlowScriptParser(tokenStream);
             parser.BuildParseTree = true;
             var expressionParseTree = parser.expression();
 
             // parse ast nodes
             var compilationUnitParser = new CompilationUnitParser();
-            compilationUnitParser.TryParseExpression( expressionParseTree, out var expression );
+            compilationUnitParser.TryParseExpression(expressionParseTree, out var expression);
 
             // resolve types
             var typeResolver = new TypeResolver();
-            typeResolver.TryResolveTypesInExpression( expression );
+            typeResolver.TryResolveTypesInExpression(expression);
 
             return expression;
         }
