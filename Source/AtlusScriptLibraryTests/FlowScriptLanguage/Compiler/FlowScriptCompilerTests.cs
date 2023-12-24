@@ -41,7 +41,8 @@ void test()
             RunTest(source, new[]
             {
                 Instruction.PROC(0),
-                Instruction.PUSHF(-420.69f),
+                Instruction.PUSHF(420.69f),
+                Instruction.MINUS(),
                 Instruction.POPLFX(0),
                 Instruction.END(),
             });
@@ -59,7 +60,8 @@ void test()
             RunTest(source, new[]
             {
                 Instruction.PROC(0),
-                Instruction.PUSHF(-420.69f),
+                Instruction.PUSHF(420.69f),
+                Instruction.MINUS(),
                 Instruction.POPLFX(0),
                 Instruction.END(),
             });
