@@ -6,6 +6,14 @@ namespace AtlusScriptLibrary.Common.Text.Encodings
     public static class ShiftJISEncoding
 #pragma warning restore S101 // Types should be named in PascalCase
     {
-        public static Encoding Instance { get; } = Encoding.GetEncoding( 932 );
+        public static Encoding Instance
+        {
+            get
+            {
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                return Encoding.GetEncoding(932);
+            }
+        }
     }
 }

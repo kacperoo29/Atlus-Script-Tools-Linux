@@ -14,127 +14,128 @@ namespace AtlusScriptLibrary.FlowScriptLanguage.BinaryModel.IO
         private EndianBinaryWriter mWriter;
         private BinaryFormatVersion mVersion;
 
-        public FlowScriptBinaryWriter( Stream stream, BinaryFormatVersion version, bool leaveOpen = false )
+        public FlowScriptBinaryWriter(Stream stream, BinaryFormatVersion version, bool leaveOpen = false)
         {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             mPositionBase = stream.Position;
-            mWriter = new EndianBinaryWriter( stream, Encoding.GetEncoding( 932 ), leaveOpen, version.HasFlag( BinaryFormatVersion.BigEndian ) ? Endianness.BigEndian : Endianness.LittleEndian );
+            mWriter = new EndianBinaryWriter(stream, Encoding.GetEncoding(932), leaveOpen, version.HasFlag(BinaryFormatVersion.BigEndian) ? Endianness.BigEndian : Endianness.LittleEndian);
             mVersion = version;
         }
 
-        public void WriteBinary( FlowScriptBinary binary )
+        public void WriteBinary(FlowScriptBinary binary)
         {
-            WriteHeader( ref binary.mHeader );
-            WriteSectionHeaders( binary.mSectionHeaders );
-            for ( int i = 0; i < binary.mSectionHeaders.Length; i++ )
+            WriteHeader(ref binary.mHeader);
+            WriteSectionHeaders(binary.mSectionHeaders);
+            for (int i = 0; i < binary.mSectionHeaders.Length; i++)
             {
                 ref var sectionHeader = ref binary.mSectionHeaders[i];
 
                 // section can be null if it has a section header without data
-                switch ( sectionHeader.SectionType )
+                switch (sectionHeader.SectionType)
                 {
                     case BinarySectionType.ProcedureLabelSection:
-                        if ( binary.mProcedureLabelSection != null )
-                            WriteLabelSection( ref sectionHeader, binary.mProcedureLabelSection );
+                        if (binary.mProcedureLabelSection != null)
+                            WriteLabelSection(ref sectionHeader, binary.mProcedureLabelSection);
                         break;
 
                     case BinarySectionType.JumpLabelSection:
-                        if ( binary.mJumpLabelSection != null )
-                            WriteLabelSection( ref sectionHeader, binary.mJumpLabelSection );
+                        if (binary.mJumpLabelSection != null)
+                            WriteLabelSection(ref sectionHeader, binary.mJumpLabelSection);
                         break;
 
                     case BinarySectionType.TextSection:
-                        if ( binary.mTextSection != null )
-                            WriteTextSection( ref sectionHeader, binary.mTextSection );
+                        if (binary.mTextSection != null)
+                            WriteTextSection(ref sectionHeader, binary.mTextSection);
                         break;
 
                     case BinarySectionType.MessageScriptSection:
-                        if ( binary.mMessageScriptSection != null )
-                            WriteMessageScriptSection( ref sectionHeader, binary.mMessageScriptSection );
+                        if (binary.mMessageScriptSection != null)
+                            WriteMessageScriptSection(ref sectionHeader, binary.mMessageScriptSection);
                         break;
 
                     case BinarySectionType.StringSection:
-                        if ( binary.mStringSection != null )
-                            WriteStringSection( ref sectionHeader, binary.mStringSection );
+                        if (binary.mStringSection != null)
+                            WriteStringSection(ref sectionHeader, binary.mStringSection);
                         break;
 
                     default:
-                        throw new Exception( "Unknown section type" );
+                        throw new Exception("Unknown section type");
                 }
             }
         }
 
-        public void WriteHeader( ref BinaryHeader header )
+        public void WriteHeader(ref BinaryHeader header)
         {
-            mWriter.Write( ref header );
+            mWriter.Write(ref header);
         }
 
-        public void WriteSectionHeaders( BinarySectionHeader[] sectionHeaders )
+        public void WriteSectionHeaders(BinarySectionHeader[] sectionHeaders)
         {
-            mWriter.Write( sectionHeaders );
+            mWriter.Write(sectionHeaders);
         }
 
-        public void WriteLabelSection( ref BinarySectionHeader sectionHeader, BinaryLabel[] labels )
+        public void WriteLabelSection(ref BinarySectionHeader sectionHeader, BinaryLabel[] labels)
         {
-            mWriter.SeekBegin( mPositionBase + sectionHeader.FirstElementAddress );
+            mWriter.SeekBegin(mPositionBase + sectionHeader.FirstElementAddress);
 
-            foreach ( var label in labels )
+            foreach (var label in labels)
             {
-                int labelLength = ( mVersion.HasFlag( BinaryFormatVersion.Version1 ) ? BinaryLabel.SIZE_V1 :
-                                    mVersion.HasFlag( BinaryFormatVersion.Version2 ) ? BinaryLabel.SIZE_V2 :
-                                    mVersion.HasFlag( BinaryFormatVersion.Version3 ) ? BinaryLabel.SIZE_V3 :
-                                    throw new Exception( "Invalid format version" ) ) - ( sizeof( int ) * 2 );
+                int labelLength = (mVersion.HasFlag(BinaryFormatVersion.Version1) ? BinaryLabel.SIZE_V1 :
+                                    mVersion.HasFlag(BinaryFormatVersion.Version2) ? BinaryLabel.SIZE_V2 :
+                                    mVersion.HasFlag(BinaryFormatVersion.Version3) ? BinaryLabel.SIZE_V3 :
+                                    throw new Exception("Invalid format version")) - (sizeof(int) * 2);
 
-                mWriter.Write( label.Name.Substring( 0, Math.Min( label.Name.Length, labelLength ) ), 
-                    StringBinaryFormat.FixedLength, labelLength );
-                mWriter.Write( label.InstructionIndex );
-                mWriter.Write( label.Reserved );
+                mWriter.Write(label.Name.Substring(0, Math.Min(label.Name.Length, labelLength)),
+                    StringBinaryFormat.FixedLength, labelLength);
+                mWriter.Write(label.InstructionIndex);
+                mWriter.Write(label.Reserved);
             }
         }
 
-        public void WriteTextSection( ref BinarySectionHeader sectionHeader, BinaryInstruction[] instructions )
+        public void WriteTextSection(ref BinarySectionHeader sectionHeader, BinaryInstruction[] instructions)
         {
-            mWriter.SeekBegin( mPositionBase + sectionHeader.FirstElementAddress );
+            mWriter.SeekBegin(mPositionBase + sectionHeader.FirstElementAddress);
 
-            for ( int i = 0; i < instructions.Length; i++ )
+            for (int i = 0; i < instructions.Length; i++)
             {
                 ref var instruction = ref instructions[i];
 
-                mWriter.Write( ( short )instruction.Opcode );
-                mWriter.Write( instruction.OperandShort );
-                
+                mWriter.Write((short)instruction.Opcode);
+                mWriter.Write(instruction.OperandShort);
+
                 // Write large operands immediately afterwards
-                if ( instruction.Opcode == Opcode.PUSHI )
+                if (instruction.Opcode == Opcode.PUSHI)
                 {
-                    Trace.Assert( i + 1 < instructions.Length, "Missing operand value for PUSHI" );
-                    mWriter.Write( instructions[++i].OperandInt );
+                    Trace.Assert(i + 1 < instructions.Length, "Missing operand value for PUSHI");
+                    mWriter.Write(instructions[++i].OperandInt);
                 }
-                else if ( instruction.Opcode == Opcode.PUSHF )
+                else if (instruction.Opcode == Opcode.PUSHF)
                 {
-                    Trace.Assert( i + 1 < instructions.Length, "Missing operand value for PUSHF" );
-                    mWriter.Write( instructions[++i].OperandFloat );
+                    Trace.Assert(i + 1 < instructions.Length, "Missing operand value for PUSHF");
+                    mWriter.Write(instructions[++i].OperandFloat);
                 }
             }
         }
 
-        public void WriteMessageScriptSection( ref BinarySectionHeader sectionHeader, MessageScriptBinary messageScript )
+        public void WriteMessageScriptSection(ref BinarySectionHeader sectionHeader, MessageScriptBinary messageScript)
         {
-            mWriter.SeekBegin( mPositionBase + sectionHeader.FirstElementAddress );
-            messageScript.ToStream( mWriter.BaseStream, true );
+            mWriter.SeekBegin(mPositionBase + sectionHeader.FirstElementAddress);
+            messageScript.ToStream(mWriter.BaseStream, true);
         }
 
-        public void WriteStringSection( ref BinarySectionHeader sectionHeader, byte[] stringSection )
+        public void WriteStringSection(ref BinarySectionHeader sectionHeader, byte[] stringSection)
         {
-            mWriter.SeekBegin( mPositionBase + sectionHeader.FirstElementAddress );
-            mWriter.Write( stringSection );
+            mWriter.SeekBegin(mPositionBase + sectionHeader.FirstElementAddress);
+            mWriter.Write(stringSection);
         }
 
         public void Dispose()
         {
-            if ( mDisposed )
+            if (mDisposed)
                 return;
 
             // Dispose the writer, and thus the stream as well
-            ( ( IDisposable )mWriter ).Dispose();
+            ((IDisposable)mWriter).Dispose();
 
             mDisposed = true;
         }
